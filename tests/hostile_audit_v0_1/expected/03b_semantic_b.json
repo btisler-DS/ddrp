@@ -1,0 +1,34 @@
+{
+  "detection": {
+    "version": "0.1.0",
+    "pattern_count": 49,
+    "matches": [
+      {
+        "op_type": "REQ",
+        "pattern_id": "REQ_MUST_001",
+        "char_start": 15,
+        "char_end": 19,
+        "matched_text": "must",
+        "captures": {
+          "keyword": "must"
+        },
+        "metadata": {
+          "strength": "hard",
+          "negated": false
+        }
+      },
+      {
+        "op_type": "UNIV",
+        "pattern_id": "UNIV_NO_001",
+        "char_start": 41,
+        "char_end": 43,
+        "matched_text": "no",
+        "captures": {
+          "quantifier": "no"
+        },
+        "metadata": {}
+      }
+    ],
+    "input_hash": "48d5f021"
+  }
+}

@@ -1,0 +1,1 @@
+For users in the EU, all data must be stored locally.

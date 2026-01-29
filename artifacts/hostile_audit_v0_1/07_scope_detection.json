@@ -1,0 +1,54 @@
+{
+  "version": "0.1.0",
+  "pattern_count": 49,
+  "matches": [
+    {
+      "op_type": "SCOPE",
+      "pattern_id": "SCOPE_FOR_USERS_001",
+      "char_start": 0,
+      "char_end": 9,
+      "matched_text": "For users",
+      "captures": {
+        "scope_phrase": "For users"
+      },
+      "metadata": {}
+    },
+    {
+      "op_type": "SCOPE",
+      "pattern_id": "SCOPE_IN_JURISDICTION_001",
+      "char_start": 10,
+      "char_end": 19,
+      "matched_text": "in the EU",
+      "captures": {
+        "scope_phrase": "in the EU"
+      },
+      "metadata": {}
+    },
+    {
+      "op_type": "UNIV",
+      "pattern_id": "UNIV_ALL_001",
+      "char_start": 21,
+      "char_end": 24,
+      "matched_text": "all",
+      "captures": {
+        "quantifier": "all"
+      },
+      "metadata": {}
+    },
+    {
+      "op_type": "REQ",
+      "pattern_id": "REQ_MUST_001",
+      "char_start": 30,
+      "char_end": 34,
+      "matched_text": "must",
+      "captures": {
+        "keyword": "must"
+      },
+      "metadata": {
+        "strength": "hard",
+        "negated": false
+      }
+    }
+  ],
+  "input_hash": "3ca1a155"
+}

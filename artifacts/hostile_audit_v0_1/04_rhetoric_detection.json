@@ -1,0 +1,18 @@
+{
+  "version": "0.1.0",
+  "pattern_count": 49,
+  "matches": [
+    {
+      "op_type": "UNIV",
+      "pattern_id": "UNIV_ALL_001",
+      "char_start": 56,
+      "char_end": 59,
+      "matched_text": "all",
+      "captures": {
+        "quantifier": "all"
+      },
+      "metadata": {}
+    }
+  ],
+  "input_hash": "23578a3d"
+}

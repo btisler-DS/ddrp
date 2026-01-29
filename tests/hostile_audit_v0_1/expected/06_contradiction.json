@@ -1,0 +1,73 @@
+{
+  "detection": {
+    "version": "0.1.0",
+    "pattern_count": 49,
+    "matches": [
+      {
+        "op_type": "REQ",
+        "pattern_id": "REQ_MUST_001",
+        "char_start": 6,
+        "char_end": 10,
+        "matched_text": "must",
+        "captures": {
+          "keyword": "must"
+        },
+        "metadata": {
+          "strength": "hard",
+          "negated": false
+        }
+      },
+      {
+        "op_type": "REQ",
+        "pattern_id": "REQ_MUST_NOT_001",
+        "char_start": 40,
+        "char_end": 48,
+        "matched_text": "must not",
+        "captures": {
+          "keyword": "must not"
+        },
+        "metadata": {
+          "strength": "hard",
+          "negated": true
+        }
+      }
+    ],
+    "input_hash": "72d3a7d1"
+  },
+  "obligations": {
+    "version": "0.1.0",
+    "obligation_count": 2,
+    "obligations": [
+      {
+        "obl_id": "OBL_REQ_APPLICABILITY_001",
+        "obl_type": "REQ_APPLICABILITY",
+        "trigger_op_id": "REQ_MUST_001",
+        "trigger_char_start": 6,
+        "trigger_char_end": 10,
+        "required_fields": ["what", "who"],
+        "present_fields": [],
+        "missing_fields": ["what", "who"],
+        "status": "OPEN",
+        "evidence": []
+      },
+      {
+        "obl_id": "OBL_REQ_APPLICABILITY_002",
+        "obl_type": "REQ_APPLICABILITY",
+        "trigger_op_id": "REQ_MUST_NOT_001",
+        "trigger_char_start": 40,
+        "trigger_char_end": 48,
+        "required_fields": ["what", "who"],
+        "present_fields": [],
+        "missing_fields": ["what", "who"],
+        "status": "OPEN",
+        "evidence": []
+      }
+    ],
+    "status_summary": {
+      "SATISFIED": 0,
+      "OPEN": 2,
+      "CONTRADICTED": 0,
+      "AMBIGUOUS": 0
+    }
+  }
+}

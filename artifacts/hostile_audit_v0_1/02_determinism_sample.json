@@ -1,0 +1,32 @@
+{
+  "version": "0.1.0",
+  "pattern_count": 49,
+  "matches": [
+    {
+      "op_type": "REQ",
+      "pattern_id": "REQ_MUST_001",
+      "char_start": 6,
+      "char_end": 10,
+      "matched_text": "must",
+      "captures": {
+        "keyword": "must"
+      },
+      "metadata": {
+        "strength": "hard",
+        "negated": false
+      }
+    },
+    {
+      "op_type": "SCOPE",
+      "pattern_id": "SCOPE_WITHIN_TIME_001",
+      "char_start": 20,
+      "char_end": 34,
+      "matched_text": "within 30 days",
+      "captures": {
+        "scope_phrase": "within 30 days"
+      },
+      "metadata": {}
+    }
+  ],
+  "input_hash": "21a83635"
+}

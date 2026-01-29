@@ -1,0 +1,48 @@
+{
+  "version": "0.1.0",
+  "obligation_count": 2,
+  "obligations": [
+    {
+      "obl_id": "OBL_REQ_APPLICABILITY_001",
+      "obl_type": "REQ_APPLICABILITY",
+      "trigger_op_id": "REQ_MUST_001",
+      "trigger_char_start": 6,
+      "trigger_char_end": 10,
+      "required_fields": [
+        "what",
+        "who"
+      ],
+      "present_fields": [],
+      "missing_fields": [
+        "what",
+        "who"
+      ],
+      "status": "OPEN",
+      "evidence": []
+    },
+    {
+      "obl_id": "OBL_REQ_APPLICABILITY_002",
+      "obl_type": "REQ_APPLICABILITY",
+      "trigger_op_id": "REQ_MUST_NOT_001",
+      "trigger_char_start": 40,
+      "trigger_char_end": 48,
+      "required_fields": [
+        "what",
+        "who"
+      ],
+      "present_fields": [],
+      "missing_fields": [
+        "what",
+        "who"
+      ],
+      "status": "OPEN",
+      "evidence": []
+    }
+  ],
+  "status_summary": {
+    "SATISFIED": 0,
+    "OPEN": 2,
+    "CONTRADICTED": 0,
+    "AMBIGUOUS": 0
+  }
+}

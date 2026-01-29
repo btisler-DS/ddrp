@@ -1,0 +1,135 @@
+{
+  "version": "0.1.0",
+  "obligation_count": 3,
+  "obligations": [
+    {
+      "obl_id": "OBL_SCOPE_BOUNDING_001",
+      "obl_type": "SCOPE_BOUNDING",
+      "trigger_op_id": "SCOPE_FOR_USERS_001",
+      "trigger_char_start": 0,
+      "trigger_char_end": 9,
+      "required_fields": [
+        "scope"
+      ],
+      "present_fields": [
+        "who",
+        "scope",
+        "where"
+      ],
+      "missing_fields": [],
+      "status": "SATISFIED",
+      "evidence": [
+        {
+          "field": "who",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 0,
+          "char_end": 9,
+          "value": "For users"
+        },
+        {
+          "field": "scope",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 0,
+          "char_end": 9,
+          "value": "For users"
+        },
+        {
+          "field": "where",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 10,
+          "char_end": 19,
+          "value": "in the EU"
+        }
+      ]
+    },
+    {
+      "obl_id": "OBL_SCOPE_BOUNDING_002",
+      "obl_type": "SCOPE_BOUNDING",
+      "trigger_op_id": "SCOPE_IN_JURISDICTION_001",
+      "trigger_char_start": 10,
+      "trigger_char_end": 19,
+      "required_fields": [
+        "scope"
+      ],
+      "present_fields": [
+        "where",
+        "scope",
+        "who"
+      ],
+      "missing_fields": [],
+      "status": "SATISFIED",
+      "evidence": [
+        {
+          "field": "where",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 10,
+          "char_end": 19,
+          "value": "in the EU"
+        },
+        {
+          "field": "scope",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 10,
+          "char_end": 19,
+          "value": "in the EU"
+        },
+        {
+          "field": "who",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 0,
+          "char_end": 9,
+          "value": "For users"
+        }
+      ]
+    },
+    {
+      "obl_id": "OBL_REQ_APPLICABILITY_001",
+      "obl_type": "REQ_APPLICABILITY",
+      "trigger_op_id": "REQ_MUST_001",
+      "trigger_char_start": 30,
+      "trigger_char_end": 34,
+      "required_fields": [
+        "what",
+        "who"
+      ],
+      "present_fields": [
+        "who",
+        "scope",
+        "where"
+      ],
+      "missing_fields": [
+        "what"
+      ],
+      "status": "OPEN",
+      "evidence": [
+        {
+          "field": "who",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 0,
+          "char_end": 9,
+          "value": "For users"
+        },
+        {
+          "field": "scope",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 0,
+          "char_end": 9,
+          "value": "For users"
+        },
+        {
+          "field": "where",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 10,
+          "char_end": 19,
+          "value": "in the EU"
+        }
+      ]
+    }
+  ],
+  "status_summary": {
+    "SATISFIED": 2,
+    "OPEN": 1,
+    "CONTRADICTED": 0,
+    "AMBIGUOUS": 0
+  }
+}

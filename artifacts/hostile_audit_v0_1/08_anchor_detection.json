@@ -1,0 +1,43 @@
+{
+  "version": "0.1.0",
+  "pattern_count": 49,
+  "matches": [
+    {
+      "op_type": "REQ",
+      "pattern_id": "REQ_REQUIRED_001",
+      "char_start": 15,
+      "char_end": 26,
+      "matched_text": "is required",
+      "captures": {
+        "keyword": "is required"
+      },
+      "metadata": {
+        "strength": "hard",
+        "negated": false
+      }
+    },
+    {
+      "op_type": "ANCHOR",
+      "pattern_id": "ANCHOR_PURSUANT_TO_001",
+      "char_start": 27,
+      "char_end": 38,
+      "matched_text": "pursuant to",
+      "captures": {
+        "anchor_phrase": "pursuant to"
+      },
+      "metadata": {}
+    },
+    {
+      "op_type": "ANCHOR",
+      "pattern_id": "ANCHOR_ISO_001",
+      "char_start": 39,
+      "char_end": 48,
+      "matched_text": "ISO 27001",
+      "captures": {
+        "standard": "ISO 27001"
+      },
+      "metadata": {}
+    }
+  ],
+  "input_hash": "5792e17d"
+}

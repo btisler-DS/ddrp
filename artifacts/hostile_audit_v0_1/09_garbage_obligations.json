@@ -1,0 +1,11 @@
+{
+  "version": "0.1.0",
+  "obligation_count": 0,
+  "obligations": [],
+  "status_summary": {
+    "SATISFIED": 0,
+    "OPEN": 0,
+    "CONTRADICTED": 0,
+    "AMBIGUOUS": 0
+  }
+}

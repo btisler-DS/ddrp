@@ -1,0 +1,59 @@
+{
+  "timestamp": "2026-01-29T23:46:01.488Z",
+  "ddrp_version": "0.1.0",
+  "total_tests": 10,
+  "passed": 10,
+  "failed": 0,
+  "results": [
+    {
+      "test": "01_environment",
+      "status": "PASS",
+      "details": "Detected 10 operators"
+    },
+    {
+      "test": "02_determinism",
+      "status": "PASS",
+      "details": "50 runs, all identical: true"
+    },
+    {
+      "test": "03_semantic",
+      "status": "PASS",
+      "details": "Outputs differ: true"
+    },
+    {
+      "test": "04_rhetoric",
+      "status": "PASS",
+      "details": "REQ operators: 0, REQ obligations: 0"
+    },
+    {
+      "test": "05_missing_info",
+      "status": "PASS",
+      "details": "Status: OPEN, Missing: what,who"
+    },
+    {
+      "test": "06_contradiction",
+      "status": "PASS",
+      "details": "REQ ops: 2, negated: 1, non-negated: 1"
+    },
+    {
+      "test": "07_scope",
+      "status": "PASS",
+      "details": "SCOPE: 2, expanded: false"
+    },
+    {
+      "test": "08_anchor",
+      "status": "PASS",
+      "details": "ANCHOR ops: 2, ISO content imported: false"
+    },
+    {
+      "test": "09_garbage",
+      "status": "PASS",
+      "details": "Operators: 0, Obligations: 0"
+    },
+    {
+      "test": "10_mutability",
+      "status": "PASS",
+      "details": "Full REQ: 1, Modified REQ: 0"
+    }
+  ]
+}

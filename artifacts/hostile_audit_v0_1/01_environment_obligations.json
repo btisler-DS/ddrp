@@ -1,0 +1,591 @@
+{
+  "version": "0.1.0",
+  "obligation_count": 9,
+  "obligations": [
+    {
+      "obl_id": "OBL_REQ_APPLICABILITY_001",
+      "obl_type": "REQ_APPLICABILITY",
+      "trigger_op_id": "REQ_MUST_001",
+      "trigger_char_start": 6,
+      "trigger_char_end": 10,
+      "required_fields": [
+        "what",
+        "who"
+      ],
+      "present_fields": [
+        "when",
+        "scope",
+        "what",
+        "why",
+        "who",
+        "where"
+      ],
+      "missing_fields": [],
+      "status": "SATISFIED",
+      "evidence": [
+        {
+          "field": "when",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "scope",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "what",
+          "source_op_id": "DEF_QUOTED_MEANS_001",
+          "char_start": 56,
+          "char_end": 80,
+          "value": "Service Provider"
+        },
+        {
+          "field": "why",
+          "source_op_id": "CAUSE_BECAUSE_001",
+          "char_start": 154,
+          "char_end": 161,
+          "value": "because"
+        },
+        {
+          "field": "who",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 200,
+          "char_end": 213,
+          "value": "For customers"
+        },
+        {
+          "field": "where",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 214,
+          "char_end": 223,
+          "value": "in the EU"
+        }
+      ]
+    },
+    {
+      "obl_id": "OBL_SCOPE_BOUNDING_001",
+      "obl_type": "SCOPE_BOUNDING",
+      "trigger_op_id": "SCOPE_WITHIN_TIME_001",
+      "trigger_char_start": 40,
+      "trigger_char_end": 54,
+      "required_fields": [
+        "scope"
+      ],
+      "present_fields": [
+        "when",
+        "scope",
+        "what",
+        "why",
+        "who",
+        "where"
+      ],
+      "missing_fields": [],
+      "status": "SATISFIED",
+      "evidence": [
+        {
+          "field": "when",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "scope",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "what",
+          "source_op_id": "DEF_QUOTED_MEANS_001",
+          "char_start": 56,
+          "char_end": 80,
+          "value": "Service Provider"
+        },
+        {
+          "field": "why",
+          "source_op_id": "CAUSE_BECAUSE_001",
+          "char_start": 154,
+          "char_end": 161,
+          "value": "because"
+        },
+        {
+          "field": "who",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 200,
+          "char_end": 213,
+          "value": "For customers"
+        },
+        {
+          "field": "where",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 214,
+          "char_end": 223,
+          "value": "in the EU"
+        }
+      ]
+    },
+    {
+      "obl_id": "OBL_DEF_CONSISTENCY_001",
+      "obl_type": "DEF_CONSISTENCY",
+      "trigger_op_id": "DEF_QUOTED_MEANS_001",
+      "trigger_char_start": 56,
+      "trigger_char_end": 80,
+      "required_fields": [
+        "what"
+      ],
+      "present_fields": [
+        "what",
+        "when",
+        "scope",
+        "why",
+        "who",
+        "where"
+      ],
+      "missing_fields": [],
+      "status": "SATISFIED",
+      "evidence": [
+        {
+          "field": "what",
+          "source_op_id": "DEF_QUOTED_MEANS_001",
+          "char_start": 56,
+          "char_end": 80,
+          "value": "Service Provider"
+        },
+        {
+          "field": "when",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "scope",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "why",
+          "source_op_id": "CAUSE_BECAUSE_001",
+          "char_start": 154,
+          "char_end": 161,
+          "value": "because"
+        },
+        {
+          "field": "who",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 200,
+          "char_end": 213,
+          "value": "For customers"
+        },
+        {
+          "field": "where",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 214,
+          "char_end": 223,
+          "value": "in the EU"
+        }
+      ]
+    },
+    {
+      "obl_id": "OBL_SCOPE_BOUNDING_002",
+      "obl_type": "SCOPE_BOUNDING",
+      "trigger_op_id": "SCOPE_UNDER_THIS_001",
+      "trigger_char_start": 112,
+      "trigger_char_end": 132,
+      "required_fields": [
+        "scope"
+      ],
+      "present_fields": [
+        "scope",
+        "when",
+        "what",
+        "why",
+        "who",
+        "where"
+      ],
+      "missing_fields": [],
+      "status": "SATISFIED",
+      "evidence": [
+        {
+          "field": "scope",
+          "source_op_id": "SCOPE_UNDER_THIS_001",
+          "char_start": 112,
+          "char_end": 132,
+          "value": "under this agreement"
+        },
+        {
+          "field": "when",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "what",
+          "source_op_id": "DEF_QUOTED_MEANS_001",
+          "char_start": 56,
+          "char_end": 80,
+          "value": "Service Provider"
+        },
+        {
+          "field": "why",
+          "source_op_id": "CAUSE_BECAUSE_001",
+          "char_start": 154,
+          "char_end": 161,
+          "value": "because"
+        },
+        {
+          "field": "who",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 200,
+          "char_end": 213,
+          "value": "For customers"
+        },
+        {
+          "field": "where",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 214,
+          "char_end": 223,
+          "value": "in the EU"
+        }
+      ]
+    },
+    {
+      "obl_id": "OBL_REQ_APPLICABILITY_002",
+      "obl_type": "REQ_APPLICABILITY",
+      "trigger_op_id": "REQ_REQUIRED_001",
+      "trigger_char_start": 142,
+      "trigger_char_end": 153,
+      "required_fields": [
+        "what",
+        "who"
+      ],
+      "present_fields": [
+        "when",
+        "scope",
+        "what",
+        "why",
+        "who",
+        "where"
+      ],
+      "missing_fields": [],
+      "status": "SATISFIED",
+      "evidence": [
+        {
+          "field": "when",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "scope",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "what",
+          "source_op_id": "DEF_QUOTED_MEANS_001",
+          "char_start": 56,
+          "char_end": 80,
+          "value": "Service Provider"
+        },
+        {
+          "field": "why",
+          "source_op_id": "CAUSE_BECAUSE_001",
+          "char_start": 154,
+          "char_end": 161,
+          "value": "because"
+        },
+        {
+          "field": "who",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 200,
+          "char_end": 213,
+          "value": "For customers"
+        },
+        {
+          "field": "where",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 214,
+          "char_end": 223,
+          "value": "in the EU"
+        }
+      ]
+    },
+    {
+      "obl_id": "OBL_CAUSE_SUPPORT_001",
+      "obl_type": "CAUSE_SUPPORT",
+      "trigger_op_id": "CAUSE_BECAUSE_001",
+      "trigger_char_start": 154,
+      "trigger_char_end": 161,
+      "required_fields": [
+        "why"
+      ],
+      "present_fields": [
+        "why",
+        "when",
+        "scope",
+        "what",
+        "who",
+        "where"
+      ],
+      "missing_fields": [],
+      "status": "SATISFIED",
+      "evidence": [
+        {
+          "field": "why",
+          "source_op_id": "CAUSE_BECAUSE_001",
+          "char_start": 154,
+          "char_end": 161,
+          "value": "because"
+        },
+        {
+          "field": "when",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "scope",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "what",
+          "source_op_id": "DEF_QUOTED_MEANS_001",
+          "char_start": 56,
+          "char_end": 80,
+          "value": "Service Provider"
+        },
+        {
+          "field": "who",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 200,
+          "char_end": 213,
+          "value": "For customers"
+        },
+        {
+          "field": "where",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 214,
+          "char_end": 223,
+          "value": "in the EU"
+        }
+      ]
+    },
+    {
+      "obl_id": "OBL_SCOPE_BOUNDING_003",
+      "obl_type": "SCOPE_BOUNDING",
+      "trigger_op_id": "SCOPE_FOR_USERS_001",
+      "trigger_char_start": 200,
+      "trigger_char_end": 213,
+      "required_fields": [
+        "scope"
+      ],
+      "present_fields": [
+        "who",
+        "scope",
+        "when",
+        "what",
+        "why",
+        "where"
+      ],
+      "missing_fields": [],
+      "status": "SATISFIED",
+      "evidence": [
+        {
+          "field": "who",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 200,
+          "char_end": 213,
+          "value": "For customers"
+        },
+        {
+          "field": "scope",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 200,
+          "char_end": 213,
+          "value": "For customers"
+        },
+        {
+          "field": "when",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "what",
+          "source_op_id": "DEF_QUOTED_MEANS_001",
+          "char_start": 56,
+          "char_end": 80,
+          "value": "Service Provider"
+        },
+        {
+          "field": "why",
+          "source_op_id": "CAUSE_BECAUSE_001",
+          "char_start": 154,
+          "char_end": 161,
+          "value": "because"
+        },
+        {
+          "field": "where",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 214,
+          "char_end": 223,
+          "value": "in the EU"
+        }
+      ]
+    },
+    {
+      "obl_id": "OBL_SCOPE_BOUNDING_004",
+      "obl_type": "SCOPE_BOUNDING",
+      "trigger_op_id": "SCOPE_IN_JURISDICTION_001",
+      "trigger_char_start": 214,
+      "trigger_char_end": 223,
+      "required_fields": [
+        "scope"
+      ],
+      "present_fields": [
+        "where",
+        "scope",
+        "when",
+        "what",
+        "why",
+        "who"
+      ],
+      "missing_fields": [],
+      "status": "SATISFIED",
+      "evidence": [
+        {
+          "field": "where",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 214,
+          "char_end": 223,
+          "value": "in the EU"
+        },
+        {
+          "field": "scope",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 214,
+          "char_end": 223,
+          "value": "in the EU"
+        },
+        {
+          "field": "when",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "what",
+          "source_op_id": "DEF_QUOTED_MEANS_001",
+          "char_start": 56,
+          "char_end": 80,
+          "value": "Service Provider"
+        },
+        {
+          "field": "why",
+          "source_op_id": "CAUSE_BECAUSE_001",
+          "char_start": 154,
+          "char_end": 161,
+          "value": "because"
+        },
+        {
+          "field": "who",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 200,
+          "char_end": 213,
+          "value": "For customers"
+        }
+      ]
+    },
+    {
+      "obl_id": "OBL_REQ_APPLICABILITY_003",
+      "obl_type": "REQ_APPLICABILITY",
+      "trigger_op_id": "REQ_MUST_001",
+      "trigger_char_start": 234,
+      "trigger_char_end": 238,
+      "required_fields": [
+        "what",
+        "who"
+      ],
+      "present_fields": [
+        "when",
+        "scope",
+        "what",
+        "why",
+        "who",
+        "where"
+      ],
+      "missing_fields": [],
+      "status": "SATISFIED",
+      "evidence": [
+        {
+          "field": "when",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "scope",
+          "source_op_id": "SCOPE_WITHIN_TIME_001",
+          "char_start": 40,
+          "char_end": 54,
+          "value": "within 30 days"
+        },
+        {
+          "field": "what",
+          "source_op_id": "DEF_QUOTED_MEANS_001",
+          "char_start": 56,
+          "char_end": 80,
+          "value": "Service Provider"
+        },
+        {
+          "field": "why",
+          "source_op_id": "CAUSE_BECAUSE_001",
+          "char_start": 154,
+          "char_end": 161,
+          "value": "because"
+        },
+        {
+          "field": "who",
+          "source_op_id": "SCOPE_FOR_USERS_001",
+          "char_start": 200,
+          "char_end": 213,
+          "value": "For customers"
+        },
+        {
+          "field": "where",
+          "source_op_id": "SCOPE_IN_JURISDICTION_001",
+          "char_start": 214,
+          "char_end": 223,
+          "value": "in the EU"
+        }
+      ]
+    }
+  ],
+  "status_summary": {
+    "SATISFIED": 9,
+    "OPEN": 0,
+    "CONTRADICTED": 0,
+    "AMBIGUOUS": 0
+  }
+}
