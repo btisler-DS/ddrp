@@ -1,20 +1,46 @@
 /**
- * DDRP Core v0.1 - Browser Bundle
+ * DDRP Core v0.2 - Browser Bundle
  *
- * This is a browser-compatible bundle of the DDRP v0.1 core.
+ * This is a browser-compatible bundle of the DDRP v0.2 core.
  * It contains the exact same logic as the Node.js version.
  *
- * No modifications to core behavior.
+ * v0.2 additions:
+ * - PDF ingestion (via pdfjs-dist)
+ * - Text canonicalization
+ * - SHA-256 hashing for archival traceability
+ * - Protocol metadata with DOI support
+ *
+ * No semantic interpretation. Lexical only.
  */
 
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Configure PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url
+).toString();
+
 // ============================================================================
-// Utility: Deterministic hash
+// Utility: SHA-256 Hash (for archival traceability)
 // ============================================================================
 
 /**
- * NOTE: Deterministic non-cryptographic hash.
- * Acceptable for v0.1 change detection / traceability only.
- * Replace with SHA-256 before any evidentiary or sealing use.
+ * Compute SHA-256 hash using SubtleCrypto (browser).
+ * Returns first 16 hex characters (64 bits) for display.
+ */
+export async function sha256Hash(data) {
+  const encoder = new TextEncoder();
+  const dataBuffer = typeof data === 'string' ? encoder.encode(data) : data;
+  const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex.substring(0, 16);
+}
+
+/**
+ * Synchronous non-cryptographic hash for backward compatibility.
+ * Use sha256Hash for anything that will be archived.
  */
 function simpleHash(str) {
   let hash = 0;
@@ -27,7 +53,245 @@ function simpleHash(str) {
 }
 
 // ============================================================================
-// Pattern Registry v0.1
+// Protocol Metadata (v0.2)
+// ============================================================================
+
+export const PROTOCOL_META = {
+  name: 'DDRP',
+  version: '0.2.0',
+  doi: null,
+  doi_status: 'unassigned',
+  spec_url: 'https://github.com/btisler-DS/ddrp',
+};
+
+export function formatDOI(meta = PROTOCOL_META) {
+  if (meta.doi_status === 'assigned' && meta.doi) {
+    return `DOI: ${meta.doi}`;
+  }
+  return 'DOI: unassigned (preprint planned)';
+}
+
+export function createTextProvenance(canonicalHash, inputHash) {
+  return {
+    input_format: 'text',
+    canonical_hash: canonicalHash,
+    input_hash: inputHash,
+  };
+}
+
+export function createPDFProvenance(pdfHash, canonicalHash, inputHash) {
+  return {
+    input_format: 'pdf',
+    pdf_hash: pdfHash,
+    canonical_hash: canonicalHash,
+    input_hash: inputHash,
+  };
+}
+
+export function wrapWithProtocol(data, provenance) {
+  return {
+    protocol: { ...PROTOCOL_META },
+    provenance,
+    timestamp: new Date().toISOString(),
+    data,
+  };
+}
+
+// ============================================================================
+// PDF Canonicalization Rules (v0.2)
+// ============================================================================
+
+const CANON_RULES_V0_2 = [
+  {
+    id: 'CANON_NORMALIZE_NEWLINES_001',
+    apply: (text) => text.replace(/\r\n?/g, '\n'),
+  },
+  {
+    id: 'CANON_COLLAPSE_WHITESPACE_001',
+    apply: (text) => text.replace(/[ \t]+/g, ' '),
+  },
+  {
+    id: 'CANON_TRIM_LINES_001',
+    apply: (text) => text.split('\n').map(line => line.trim()).join('\n'),
+  },
+  {
+    id: 'CANON_PRESERVE_PARAGRAPHS_001',
+    apply: (text) => text.replace(/\n{3,}/g, '\n\n'),
+  },
+  {
+    id: 'CANON_REMOVE_PAGE_NUMBERS_001',
+    apply: (text) => text.replace(/^\d+$/gm, ''),
+  },
+  {
+    id: 'CANON_COLLAPSE_EMPTY_LINES_001',
+    apply: (text) => text.replace(/\n{3,}/g, '\n\n'),
+  },
+  {
+    id: 'CANON_TRIM_DOCUMENT_001',
+    apply: (text) => text.trim(),
+  },
+];
+
+export const CANON_VERSION = '0.2.0';
+export const CANON_RULE_COUNT = CANON_RULES_V0_2.length;
+
+/**
+ * Canonicalize text using versioned rules.
+ * Returns result with applied_rules for traceability.
+ */
+export async function canonicalizeText(rawText) {
+  const appliedRules = [];
+  let text = rawText;
+
+  for (const rule of CANON_RULES_V0_2) {
+    text = rule.apply(text);
+    appliedRules.push(rule.id);
+  }
+
+  const canonicalHash = await sha256Hash(text);
+
+  return {
+    version: CANON_VERSION,
+    rule_count: CANON_RULES_V0_2.length,
+    applied_rules: appliedRules,
+    original_length: rawText.length,
+    canonical_length: text.length,
+    canonical_text: text,
+    canonical_hash: canonicalHash,
+  };
+}
+
+// ============================================================================
+// PDF Ingestion (v0.2)
+// ============================================================================
+
+export const PDF_INGEST_VERSION = '0.2.0';
+const MIN_CHARS_PER_PAGE = 100;
+
+/**
+ * Ingest PDF and extract text.
+ * Rejects encrypted and scanned PDFs.
+ */
+export async function ingestPDF(pdfArrayBuffer) {
+  const pdfHash = await sha256Hash(pdfArrayBuffer);
+
+  try {
+    const loadingTask = pdfjsLib.getDocument({
+      data: new Uint8Array(pdfArrayBuffer),
+      useSystemFonts: false,
+      disableFontFace: true,
+    });
+
+    const pdfDocument = await loadingTask.promise;
+    const pageCount = pdfDocument.numPages;
+
+    const pageTexts = [];
+    let totalChars = 0;
+
+    for (let pageNum = 1; pageNum <= pageCount; pageNum++) {
+      const page = await pdfDocument.getPage(pageNum);
+      const textContent = await page.getTextContent();
+
+      const pageText = textContent.items
+        .map(item => item.str || '')
+        .join(' ');
+
+      pageTexts.push(pageText);
+      totalChars += pageText.length;
+    }
+
+    const rawText = pageTexts.join('\n\n');
+
+    // Check for scanned PDF
+    const avgCharsPerPage = totalChars / pageCount;
+    if (avgCharsPerPage < MIN_CHARS_PER_PAGE) {
+      return {
+        version: PDF_INGEST_VERSION,
+        success: false,
+        error: {
+          code: 'SCANNED_SUSPECT',
+          message: `PDF appears to be scanned (${Math.round(avgCharsPerPage)} chars/page). OCR is not supported.`,
+        },
+        page_count: pageCount,
+        raw_text: '',
+        pdf_hash: pdfHash,
+        metadata: { is_encrypted: false, is_scanned: true },
+      };
+    }
+
+    // Check for empty
+    if (rawText.trim().length === 0) {
+      return {
+        version: PDF_INGEST_VERSION,
+        success: false,
+        error: {
+          code: 'EMPTY',
+          message: 'No text could be extracted from this PDF.',
+        },
+        page_count: pageCount,
+        raw_text: '',
+        pdf_hash: pdfHash,
+        metadata: { is_encrypted: false, is_scanned: false },
+      };
+    }
+
+    // Get metadata
+    let producer, creationDate;
+    try {
+      const info = await pdfDocument.getMetadata();
+      producer = info?.info?.Producer;
+      creationDate = info?.info?.CreationDate;
+    } catch {
+      // Metadata not available
+    }
+
+    return {
+      version: PDF_INGEST_VERSION,
+      success: true,
+      page_count: pageCount,
+      raw_text: rawText,
+      pdf_hash: pdfHash,
+      metadata: {
+        is_encrypted: false,
+        is_scanned: false,
+        producer,
+        creation_date: creationDate,
+      },
+    };
+  } catch (err) {
+    // Check for encryption
+    if (err.name === 'PasswordException' || err.message?.includes('password')) {
+      return {
+        version: PDF_INGEST_VERSION,
+        success: false,
+        error: {
+          code: 'ENCRYPTED',
+          message: 'This PDF is encrypted. DDRP cannot process encrypted PDFs.',
+        },
+        page_count: 0,
+        raw_text: '',
+        pdf_hash: pdfHash,
+        metadata: { is_encrypted: true, is_scanned: false },
+      };
+    }
+
+    return {
+      version: PDF_INGEST_VERSION,
+      success: false,
+      error: {
+        code: 'PARSE_ERROR',
+        message: `Failed to parse PDF: ${err.message}`,
+      },
+      page_count: 0,
+      raw_text: '',
+      pdf_hash: pdfHash,
+      metadata: { is_encrypted: false, is_scanned: false },
+    };
+  }
+}
+
+// ============================================================================
+// Pattern Registry v0.1 (unchanged)
 // ============================================================================
 
 const PATTERNS_V0_1 = [
@@ -594,5 +858,5 @@ export function instantiateObligations(matches) {
 // Exports
 // ============================================================================
 
-export const DDRP_VERSION = '0.1.0';
+export const DDRP_VERSION = '0.2.0';
 export const PATTERN_COUNT = PATTERNS_V0_1.length;

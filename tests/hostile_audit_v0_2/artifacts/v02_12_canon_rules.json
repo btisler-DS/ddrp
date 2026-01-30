@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "rule_count": 7,
+  "applied_rules": [
+    "CANON_NORMALIZE_NEWLINES_001",
+    "CANON_COLLAPSE_WHITESPACE_001",
+    "CANON_TRIM_LINES_001",
+    "CANON_PRESERVE_PARAGRAPHS_001",
+    "CANON_REMOVE_PAGE_NUMBERS_001",
+    "CANON_COLLAPSE_EMPTY_LINES_001",
+    "CANON_TRIM_DOCUMENT_001"
+  ],
+  "original_length": 43,
+  "canonical_length": 34,
+  "canonical_text": "Test\ntext with spaces\n\nand breaks.",
+  "canonical_hash": "96560579a55a8307"
+}

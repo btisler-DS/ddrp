@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DDRP v0.1 — Deterministic Document Review Protocol</title>
+  <title>DDRP v0.2 — Deterministic Document Review Protocol</title>
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
   <header>
-    <h1>DDRP v0.1</h1>
+    <h1>DDRP v0.2</h1>
     <p>Deterministic Document Review Protocol</p>
   </header>
 
@@ -30,10 +30,19 @@
       <textarea id="document-input" placeholder="Paste or type document text here..."></textarea>
       <div id="input-meta">
         <span id="char-count">0 characters</span>
-        <button id="load-file">Load .txt / .md file</button>
+        <button id="load-file">Load .txt / .md</button>
         <input type="file" id="file-input" accept=".txt,.md" class="hidden">
+        <button id="load-pdf">Load PDF</button>
+        <input type="file" id="pdf-file-input" accept=".pdf" class="hidden">
       </div>
       <button id="run-review">Run Deterministic Review</button>
+    </section>
+
+    <section id="pdf-preview-section" class="hidden">
+      <h2>PDF Extraction Result</h2>
+      <div id="pdf-meta"></div>
+      <label for="extracted-text-preview">Extracted Text (read-only, canonicalized)</label>
+      <textarea id="extracted-text-preview" readonly placeholder="Extracted PDF text will appear here..."></textarea>
     </section>
 
     <section id="operators-section" class="hidden">
@@ -84,10 +93,11 @@
 
   <footer>
     <div id="footer-meta">
-      <span id="footer-version">DDRP v0.1.0</span>
+      <span id="footer-version">DDRP v0.2.0</span>
       <span id="footer-patterns">Patterns: --</span>
       <span id="footer-hash">Input hash: --</span>
       <span id="footer-timestamp">Timestamp: --</span>
+      <span id="footer-doi">DOI: unassigned</span>
     </div>
     <div id="footer-links">
       <a href="USER_GUIDE.md" target="_blank">User Guide</a>

@@ -1,0 +1,107 @@
+{
+  "version": "0.1.0",
+  "pattern_count": 49,
+  "matches": [
+    {
+      "op_type": "REQ",
+      "pattern_id": "REQ_MUST_001",
+      "char_start": 6,
+      "char_end": 10,
+      "matched_text": "must",
+      "captures": {
+        "keyword": "must"
+      },
+      "metadata": {
+        "strength": "hard",
+        "negated": false
+      }
+    },
+    {
+      "op_type": "SCOPE",
+      "pattern_id": "SCOPE_WITHIN_TIME_001",
+      "char_start": 40,
+      "char_end": 54,
+      "matched_text": "within 30 days",
+      "captures": {
+        "scope_phrase": "within 30 days"
+      },
+      "metadata": {}
+    },
+    {
+      "op_type": "REQ",
+      "pattern_id": "REQ_SHALL_001",
+      "char_start": 73,
+      "char_end": 78,
+      "matched_text": "shall",
+      "captures": {
+        "keyword": "shall"
+      },
+      "metadata": {
+        "strength": "hard",
+        "negated": false
+      }
+    },
+    {
+      "op_type": "REQ",
+      "pattern_id": "REQ_REQUIRED_001",
+      "char_start": 105,
+      "char_end": 116,
+      "matched_text": "is required",
+      "captures": {
+        "keyword": "is required"
+      },
+      "metadata": {
+        "strength": "hard",
+        "negated": false
+      }
+    },
+    {
+      "op_type": "SCOPE",
+      "pattern_id": "SCOPE_FOR_USERS_001",
+      "char_start": 127,
+      "char_end": 140,
+      "matched_text": "For customers",
+      "captures": {
+        "scope_phrase": "For customers"
+      },
+      "metadata": {}
+    },
+    {
+      "op_type": "SCOPE",
+      "pattern_id": "SCOPE_IN_JURISDICTION_001",
+      "char_start": 141,
+      "char_end": 150,
+      "matched_text": "in the EU",
+      "captures": {
+        "scope_phrase": "in the EU"
+      },
+      "metadata": {}
+    },
+    {
+      "op_type": "UNIV",
+      "pattern_id": "UNIV_ALL_001",
+      "char_start": 152,
+      "char_end": 155,
+      "matched_text": "all",
+      "captures": {
+        "quantifier": "all"
+      },
+      "metadata": {}
+    },
+    {
+      "op_type": "REQ",
+      "pattern_id": "REQ_MUST_001",
+      "char_start": 161,
+      "char_end": 165,
+      "matched_text": "must",
+      "captures": {
+        "keyword": "must"
+      },
+      "metadata": {
+        "strength": "hard",
+        "negated": false
+      }
+    }
+  ],
+  "input_hash": "4bf49071"
+}

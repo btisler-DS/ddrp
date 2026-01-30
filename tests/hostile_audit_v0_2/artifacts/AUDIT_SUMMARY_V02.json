@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-01-30T05:58:23.870Z",
+  "canonicalizer_version": "0.2.0",
+  "pdf_ingest_version": "0.2.0",
+  "total": 12,
+  "passed": 7,
+  "failed": 0,
+  "skipped": 5,
+  "results": [
+    {
+      "test": "01_v01_regression_environment",
+      "status": "PASS",
+      "details": "Detected 8 operators (REQ: true, SCOPE: true)"
+    },
+    {
+      "test": "02_v01_regression_determinism",
+      "status": "PASS",
+      "details": "50 runs, all identical: true"
+    },
+    {
+      "test": "11_canon_determinism",
+      "status": "PASS",
+      "details": "50 runs, all identical: true, hash: b9cdc032e0a0923f"
+    },
+    {
+      "test": "12_canon_rules_applied",
+      "status": "PASS",
+      "details": "Rules applied: 7/7, in order: true"
+    },
+    {
+      "test": "13_canon_whitespace_collapse",
+      "status": "PASS",
+      "details": "No double spaces: true, content preserved: true"
+    },
+    {
+      "test": "14_canon_paragraph_preservation",
+      "status": "PASS",
+      "details": "Paragraph break preserved: true, excess collapsed: true"
+    },
+    {
+      "test": "15_canon_sha256_format",
+      "status": "PASS",
+      "details": "Hash format valid (16 hex chars): true, hash: 976fb7991e82d7b6"
+    },
+    {
+      "test": "21_pdf_determinism",
+      "status": "SKIP",
+      "details": "PDF test file not found: 21_pdf_determinism.pdf"
+    },
+    {
+      "test": "22_pdf_encrypted_rejection",
+      "status": "SKIP",
+      "details": "PDF test file not found: 22_pdf_encrypted.pdf"
+    },
+    {
+      "test": "23_pdf_scanned_rejection",
+      "status": "SKIP",
+      "details": "PDF test file not found: 23_pdf_scanned.pdf"
+    },
+    {
+      "test": "24_pdf_text_parity",
+      "status": "SKIP",
+      "details": "PDF/text parity test files not found"
+    },
+    {
+      "test": "25_pdf_mutation",
+      "status": "SKIP",
+      "details": "PDF mutation test files not found"
+    }
+  ]
+}

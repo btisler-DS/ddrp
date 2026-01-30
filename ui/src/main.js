@@ -1,11 +1,30 @@
 /**
- * DDRP v0.1 UI - Main Application
+ * DDRP v0.2 UI - Main Application
  *
- * This is a thin wrapper over DDRP v0.1 core.
+ * This is a thin wrapper over DDRP v0.2 core.
  * It does not interpret, summarize, score, or explain results.
+ *
+ * v0.2 additions:
+ * - PDF upload and text extraction
+ * - Read-only preview of extracted text
+ * - Chain-of-custody provenance in exports
  */
 
-import { detectOperators, instantiateObligations, DDRP_VERSION, PATTERN_COUNT } from './ddrp-core.js';
+import {
+  detectOperators,
+  instantiateObligations,
+  ingestPDF,
+  canonicalizeText,
+  sha256Hash,
+  formatDOI,
+  createTextProvenance,
+  createPDFProvenance,
+  wrapWithProtocol,
+  DDRP_VERSION,
+  PATTERN_COUNT,
+  PROTOCOL_META,
+  CANON_RULE_COUNT,
+} from './ddrp-core.js';
 
 // ============================================================================
 // Known Test Inputs (from tests/hostile_audit_v0_1/inputs/)
@@ -28,6 +47,9 @@ const KNOWN_SAMPLES = {
 
 let currentDetection = null;
 let currentObligations = null;
+let currentPDFResult = null;
+let currentCanonResult = null;
+let inputSource = 'text'; // 'text' | 'pdf'
 
 // ============================================================================
 // DOM Elements
@@ -37,6 +59,8 @@ const documentInput = document.getElementById('document-input');
 const charCount = document.getElementById('char-count');
 const loadFileBtn = document.getElementById('load-file');
 const fileInput = document.getElementById('file-input');
+const loadPdfBtn = document.getElementById('load-pdf');
+const pdfFileInput = document.getElementById('pdf-file-input');
 const runReviewBtn = document.getElementById('run-review');
 const runSelfTestBtn = document.getElementById('run-self-test');
 const selfTestResult = document.getElementById('self-test-result');
@@ -53,6 +77,12 @@ const footerVersion = document.getElementById('footer-version');
 const footerPatterns = document.getElementById('footer-patterns');
 const footerHash = document.getElementById('footer-hash');
 const footerTimestamp = document.getElementById('footer-timestamp');
+const footerDoi = document.getElementById('footer-doi');
+
+// PDF-specific elements
+const pdfPreviewSection = document.getElementById('pdf-preview-section');
+const pdfMetaDisplay = document.getElementById('pdf-meta');
+const extractedTextPreview = document.getElementById('extracted-text-preview');
 
 // ============================================================================
 // Initialize
@@ -61,6 +91,7 @@ const footerTimestamp = document.getElementById('footer-timestamp');
 function init() {
   footerVersion.textContent = `DDRP v${DDRP_VERSION}`;
   footerPatterns.textContent = `Patterns: ${PATTERN_COUNT}`;
+  footerDoi.textContent = formatDOI(PROTOCOL_META);
 
   // Create sample buttons
   for (const [name, text] of Object.entries(KNOWN_SAMPLES)) {
@@ -74,6 +105,8 @@ function init() {
   documentInput.addEventListener('input', updateCharCount);
   loadFileBtn.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', handleFileLoad);
+  loadPdfBtn.addEventListener('click', () => pdfFileInput.click());
+  pdfFileInput.addEventListener('change', handlePDFLoad);
   runReviewBtn.addEventListener('click', runReview);
   runSelfTestBtn.addEventListener('click', runSelfTest);
   exportOperatorsBtn.addEventListener('click', exportOperators);
@@ -94,6 +127,10 @@ function updateCharCount() {
 
 function loadSample(name, text) {
   documentInput.value = text;
+  inputSource = 'text';
+  currentPDFResult = null;
+  currentCanonResult = null;
+  hidePDFPreview();
   updateCharCount();
   clearResults();
 }
@@ -105,6 +142,10 @@ function handleFileLoad(e) {
   const reader = new FileReader();
   reader.onload = (event) => {
     documentInput.value = event.target.result;
+    inputSource = 'text';
+    currentPDFResult = null;
+    currentCanonResult = null;
+    hidePDFPreview();
     updateCharCount();
     clearResults();
   };
@@ -112,18 +153,84 @@ function handleFileLoad(e) {
   fileInput.value = '';
 }
 
+async function handlePDFLoad(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  pdfFileInput.value = '';
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    currentPDFResult = await ingestPDF(arrayBuffer);
+
+    if (!currentPDFResult.success) {
+      displayPDFError(currentPDFResult.error);
+      return;
+    }
+
+    currentCanonResult = await canonicalizeText(currentPDFResult.raw_text);
+    inputSource = 'pdf';
+
+    displayPDFMeta(file.name);
+    displayExtractedText();
+    clearResults();
+  } catch (err) {
+    alert(`Failed to load PDF: ${err.message}`);
+  }
+}
+
+function displayPDFMeta(filename) {
+  pdfMetaDisplay.innerHTML = `
+    <div><strong>File:</strong> ${escapeHtml(filename)}</div>
+    <div><strong>Pages:</strong> ${currentPDFResult.page_count}</div>
+    <div><strong>Extraction:</strong> Success</div>
+    <div><strong>PDF Hash (SHA-256):</strong> ${currentPDFResult.pdf_hash}</div>
+    <div><strong>Canonical Hash (SHA-256):</strong> ${currentCanonResult.canonical_hash}</div>
+    <div><strong>Canon Rules Applied:</strong> ${currentCanonResult.applied_rules.length}</div>
+  `;
+  pdfPreviewSection.classList.remove('hidden');
+}
+
+function displayExtractedText() {
+  extractedTextPreview.value = currentCanonResult.canonical_text;
+  charCount.textContent = `${currentCanonResult.canonical_length} characters (from PDF)`;
+}
+
+function displayPDFError(error) {
+  const messages = {
+    'ENCRYPTED': 'This PDF is encrypted. DDRP cannot process encrypted PDFs.',
+    'SCANNED_SUSPECT': 'This PDF appears to be scanned. OCR is not supported in DDRP.',
+    'PARSE_ERROR': `Failed to parse PDF: ${error.message}`,
+    'EMPTY': 'No text could be extracted from this PDF.',
+  };
+  alert(messages[error.code] || error.message);
+}
+
+function hidePDFPreview() {
+  pdfPreviewSection.classList.add('hidden');
+  pdfMetaDisplay.innerHTML = '';
+  extractedTextPreview.value = '';
+}
+
 // ============================================================================
 // Review Execution
 // ============================================================================
 
 function runReview() {
-  const text = documentInput.value;
-  if (!text.trim()) {
+  let textToAnalyze;
+
+  if (inputSource === 'pdf' && currentCanonResult) {
+    textToAnalyze = currentCanonResult.canonical_text;
+  } else {
+    textToAnalyze = documentInput.value;
+  }
+
+  if (!textToAnalyze.trim()) {
     alert('No document text provided.');
     return;
   }
 
-  currentDetection = detectOperators(text);
+  currentDetection = detectOperators(textToAnalyze);
   currentObligations = instantiateObligations(currentDetection.matches);
 
   renderOperators();
@@ -218,6 +325,7 @@ function runSelfTest() {
   output += `Timestamp: ${new Date().toISOString()}\n\n`;
   output += `Determinism Test (10 runs): ${allIdentical ? 'PASS' : 'FAIL'}\n`;
   output += `Pattern Count: ${PATTERN_COUNT}\n`;
+  output += `Canon Rule Count: ${CANON_RULE_COUNT}\n`;
   output += `Test Input Hash: ${detection.input_hash}\n`;
   output += `Operators Detected: ${detection.matches.length}\n\n`;
 
@@ -229,6 +337,7 @@ function runSelfTest() {
     output += `  ${name}: ${det.matches.length} ops, ${obl.obligation_count} obls\n`;
   }
 
+  output += `\n${formatDOI(PROTOCOL_META)}\n`;
   output += `\nOverall: ${allIdentical ? 'PASS' : 'FAIL'}`;
 
   selfTestResult.textContent = output;
@@ -276,14 +385,27 @@ async function exportBundle() {
     return;
   }
 
-  // Simple ZIP implementation using JSZip if available, otherwise export as JSON
-  const bundle = {
-    ddrp_version: DDRP_VERSION,
-    timestamp: new Date().toISOString(),
-    input_hash: currentDetection.input_hash,
-    detection: currentDetection,
-    obligations: currentObligations,
-  };
+  // Build provenance based on input source
+  let provenance;
+  if (inputSource === 'pdf' && currentPDFResult && currentCanonResult) {
+    provenance = createPDFProvenance(
+      currentPDFResult.pdf_hash,
+      currentCanonResult.canonical_hash,
+      currentDetection.input_hash
+    );
+  } else {
+    // For text input, compute canonical hash
+    const textHash = await sha256Hash(documentInput.value);
+    provenance = createTextProvenance(textHash, currentDetection.input_hash);
+  }
+
+  const bundle = wrapWithProtocol(
+    {
+      detection: currentDetection,
+      obligations: currentObligations,
+    },
+    provenance
+  );
 
   downloadJson(bundle, getExportFilename('bundle'));
 }

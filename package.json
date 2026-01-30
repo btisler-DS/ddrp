@@ -1,13 +1,15 @@
 {
   "name": "ddrp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Deterministic Document Review Protocol - Reference Implementation",
   "main": "dist/operators_v0_1.js",
   "scripts": {
     "build": "tsc",
     "verify": "ts-node src/verify_checkpoint.ts",
     "typecheck": "tsc --noEmit",
-    "hostile-audit": "ts-node tests/hostile_audit_v0_1/run_audit.ts",
+    "hostile-audit-v01": "ts-node tests/hostile_audit_v0_1/run_audit.ts",
+    "hostile-audit-v02": "ts-node tests/hostile_audit_v0_2/run_audit.ts",
+    "hostile-audit": "npm run hostile-audit-v01 && npm run hostile-audit-v02",
     "ui": "cd ui && npm run dev",
     "ui:build": "cd ui && npm run build",
     "ui:install": "cd ui && npm install"
@@ -16,11 +18,15 @@
     "document-review",
     "deterministic",
     "protocol",
-    "obligation-detection"
+    "obligation-detection",
+    "pdf"
   ],
   "author": "",
   "license": "CC-BY-NC-4.0",
   "type": "commonjs",
+  "dependencies": {
+    "pdfjs-dist": "^4.0.379"
+  },
   "devDependencies": {
     "@types/node": "^25.1.0",
     "ts-node": "^10.9.2",

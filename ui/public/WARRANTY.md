@@ -58,4 +58,29 @@ In no event shall the authors or contributors be liable for any claim, damages, 
 
 ---
 
+## PDF Processing Limitations (v0.2)
+
+DDRP PDF text extraction:
+
+- **Extracts text only** — Images, forms, annotations, and embedded files are not processed
+- **Cannot process encrypted PDFs** — Password-protected PDFs are rejected
+- **Does not support OCR** — Scanned documents are detected and rejected
+- **Text order may differ** — Complex layouts (multi-column, tables) may extract in unexpected order
+- **Formatting is lost** — Bold, italic, fonts, and colors are not preserved
+- **Canonicalization is applied** — Whitespace is normalized, page numbers may be removed
+
+PDF extraction may not perfectly reproduce document formatting or visual layout. DDRP analyzes the extracted text, not the visual appearance.
+
+### Chain of Custody
+
+For PDF inputs, DDRP provides:
+
+- `pdf_hash`: SHA-256 hash of original PDF bytes
+- `canonical_hash`: SHA-256 hash of canonicalized extracted text
+- `applied_rules`: List of canonicalization rules applied
+
+These hashes are for traceability only, not cryptographic sealing.
+
+---
+
 **By using DDRP, you acknowledge and accept these terms.**
