@@ -11,6 +11,13 @@ import { createOperatorDetector } from '../../src/operators_v0_1';
 import { instantiateObligations } from '../../src/obligations_v0_1';
 import { canonicalize, sha256Hash, CANON_VERSION } from '../../src/pdf_canonicalizer_v0_2';
 import { ingestPDF, PDF_INGEST_VERSION } from '../../src/pdf_ingest_v0_2';
+import {
+  createTransactionRecord,
+  verifyTransactionChain,
+  writeTransactionRecord,
+  TRANSACTION_VERSION,
+  sha256,
+} from '../../src/transaction_log_v0_2';
 
 // ============================================================================
 // Types
@@ -332,6 +339,127 @@ async function test25_pdf_mutation(): Promise<TestResult> {
 }
 
 // ============================================================================
+// v0.2 Transaction Record Tests
+// ============================================================================
+
+const TEST_TX_DIR = path.join(ARTIFACTS_DIR, 'test_transactions');
+
+function test31_transaction_determinism(): TestResult {
+  // Clean up test directory
+  if (fs.existsSync(TEST_TX_DIR)) {
+    fs.rmSync(TEST_TX_DIR, { recursive: true });
+  }
+
+  const options = {
+    inputHash: '7f3a9c12abcd1234',
+    inputLength: 1000,
+    inputFormat: 'text/plain' as const,
+    detectionHash: '91bc0a77efgh5678',
+    obligationsHash: 'f12e8c44ijkl9012',
+    ddrpVersion: '0.2.0',
+    transactionsDir: TEST_TX_DIR,
+  };
+
+  const outputs: string[] = [];
+  for (let i = 0; i < 10; i++) {
+    const record = createTransactionRecord(options);
+    // Exclude transaction_id and timestamp for determinism check (they vary)
+    const comparable = {
+      input: record.input,
+      outputs: record.outputs,
+      environment: { ddrp_version: record.environment.ddrp_version },
+      chain: { previous_transaction_hash: record.chain.previous_transaction_hash },
+    };
+    outputs.push(JSON.stringify(comparable));
+  }
+
+  const allIdentical = outputs.every(o => o === outputs[0]);
+
+  return {
+    test: '31_transaction_determinism',
+    status: allIdentical ? 'PASS' : 'FAIL',
+    details: `10 runs (excluding UUID/timestamp), all identical: ${allIdentical}`,
+  };
+}
+
+function test32_transaction_chain_integrity(): TestResult {
+  // Clean up test directory
+  if (fs.existsSync(TEST_TX_DIR)) {
+    fs.rmSync(TEST_TX_DIR, { recursive: true });
+  }
+
+  // Create a chain of 3 transactions
+  for (let i = 0; i < 3; i++) {
+    const record = createTransactionRecord({
+      inputHash: `input_${i}`,
+      inputLength: 100 + i,
+      inputFormat: 'text/plain',
+      detectionHash: `detection_${i}`,
+      obligationsHash: `obligations_${i}`,
+      ddrpVersion: '0.2.0',
+      transactionsDir: TEST_TX_DIR,
+    });
+    writeTransactionRecord(record, TEST_TX_DIR);
+  }
+
+  const verification = verifyTransactionChain(TEST_TX_DIR);
+
+  writeArtifact('v02_32_transaction_chain.json', verification);
+
+  return {
+    test: '32_transaction_chain_integrity',
+    status: verification.valid ? 'PASS' : 'FAIL',
+    details: `Chain valid: ${verification.valid}, count: ${verification.count}, errors: ${verification.errors.length}`,
+  };
+}
+
+function test33_transaction_genesis_hash(): TestResult {
+  // Clean up test directory
+  if (fs.existsSync(TEST_TX_DIR)) {
+    fs.rmSync(TEST_TX_DIR, { recursive: true });
+  }
+
+  const record = createTransactionRecord({
+    inputHash: 'genesis_test',
+    inputLength: 50,
+    inputFormat: 'text/plain',
+    detectionHash: 'detection_genesis',
+    obligationsHash: 'obligations_genesis',
+    ddrpVersion: '0.2.0',
+    transactionsDir: TEST_TX_DIR,
+  });
+
+  const hasGenesisHash = record.chain.previous_transaction_hash === '0000000000000000';
+  const hasValidSelfHash = /^[0-9a-f]{16}$/.test(record.chain.transaction_hash);
+
+  return {
+    test: '33_transaction_genesis_hash',
+    status: hasGenesisHash && hasValidSelfHash ? 'PASS' : 'FAIL',
+    details: `Genesis hash: ${hasGenesisHash}, valid self hash: ${hasValidSelfHash}`,
+  };
+}
+
+function test34_transaction_disclaimer(): TestResult {
+  const record = createTransactionRecord({
+    inputHash: 'disclaimer_test',
+    inputLength: 50,
+    inputFormat: 'text/plain',
+    detectionHash: 'detection_test',
+    obligationsHash: 'obligations_test',
+    ddrpVersion: '0.2.0',
+    transactionsDir: TEST_TX_DIR,
+  });
+
+  const hasDisclaimer = record.disclaimer.includes('does not assert compliance');
+
+  return {
+    test: '34_transaction_disclaimer',
+    status: hasDisclaimer ? 'PASS' : 'FAIL',
+    details: `Disclaimer present: ${hasDisclaimer}`,
+  };
+}
+
+// ============================================================================
 // Main Runner
 // ============================================================================
 
@@ -339,6 +467,7 @@ async function runAudit(): Promise<void> {
   console.log('=== DDRP v0.2 HOSTILE AUDIT ===\n');
   console.log(`Canonicalizer Version: ${CANON_VERSION}`);
   console.log(`PDF Ingest Version: ${PDF_INGEST_VERSION}`);
+  console.log(`Transaction Version: ${TRANSACTION_VERSION}`);
   console.log(`Timestamp: ${new Date().toISOString()}\n`);
 
   const results: TestResult[] = [];
@@ -364,6 +493,13 @@ async function runAudit(): Promise<void> {
   results.push(await test24_pdf_text_parity());
   results.push(await test25_pdf_mutation());
 
+  // v0.2 Transaction Record Tests
+  console.log('\n--- v0.2 Transaction Record Tests ---');
+  results.push(test31_transaction_determinism());
+  results.push(test32_transaction_chain_integrity());
+  results.push(test33_transaction_genesis_hash());
+  results.push(test34_transaction_disclaimer());
+
   // Print results
   console.log('\n--- Results ---');
   for (const result of results) {
@@ -381,6 +517,7 @@ async function runAudit(): Promise<void> {
     timestamp: new Date().toISOString(),
     canonicalizer_version: CANON_VERSION,
     pdf_ingest_version: PDF_INGEST_VERSION,
+    transaction_version: TRANSACTION_VERSION,
     total: results.length,
     passed,
     failed,

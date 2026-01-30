@@ -35,6 +35,12 @@
         <button id="load-pdf">Load PDF</button>
         <input type="file" id="pdf-file-input" accept=".pdf" class="hidden">
       </div>
+      <div id="review-options">
+        <label>
+          <input type="checkbox" id="generate-transaction">
+          Generate transaction record
+        </label>
+      </div>
       <button id="run-review">Run Deterministic Review</button>
     </section>
 
@@ -86,7 +92,8 @@
       <div id="export-buttons">
         <button id="export-operators">Export Operators (JSON)</button>
         <button id="export-obligations">Export Obligations (JSON)</button>
-        <button id="export-bundle">Export Bundle (ZIP)</button>
+        <button id="export-bundle">Export Bundle (JSON)</button>
+        <button id="export-transaction">Export Transaction Record</button>
       </div>
     </section>
   </main>
@@ -97,6 +104,7 @@
       <span id="footer-patterns">Patterns: --</span>
       <span id="footer-hash">Input hash: --</span>
       <span id="footer-timestamp">Timestamp: --</span>
+      <span id="transaction-hash" class="hidden">TX: --</span>
       <span id="footer-doi">DOI: unassigned</span>
     </div>
     <div id="footer-links">

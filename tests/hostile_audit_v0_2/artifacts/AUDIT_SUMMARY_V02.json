@@ -1,9 +1,10 @@
 {
-  "timestamp": "2026-01-30T05:58:23.870Z",
+  "timestamp": "2026-01-30T06:08:07.368Z",
   "canonicalizer_version": "0.2.0",
   "pdf_ingest_version": "0.2.0",
-  "total": 12,
-  "passed": 7,
+  "transaction_version": "0.2.0",
+  "total": 16,
+  "passed": 11,
   "failed": 0,
   "skipped": 5,
   "results": [
@@ -66,6 +67,26 @@
       "test": "25_pdf_mutation",
       "status": "SKIP",
       "details": "PDF mutation test files not found"
+    },
+    {
+      "test": "31_transaction_determinism",
+      "status": "PASS",
+      "details": "10 runs (excluding UUID/timestamp), all identical: true"
+    },
+    {
+      "test": "32_transaction_chain_integrity",
+      "status": "PASS",
+      "details": "Chain valid: true, count: 3, errors: 0"
+    },
+    {
+      "test": "33_transaction_genesis_hash",
+      "status": "PASS",
+      "details": "Genesis hash: true, valid self hash: true"
+    },
+    {
+      "test": "34_transaction_disclaimer",
+      "status": "PASS",
+      "details": "Disclaimer present: true"
     }
   ]
 }

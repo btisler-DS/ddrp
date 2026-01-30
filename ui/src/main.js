@@ -20,10 +20,12 @@ import {
   createTextProvenance,
   createPDFProvenance,
   wrapWithProtocol,
+  createTransactionRecord,
   DDRP_VERSION,
   PATTERN_COUNT,
   PROTOCOL_META,
   CANON_RULE_COUNT,
+  TRANSACTION_VERSION,
 } from './ddrp-core.js';
 
 // ============================================================================
@@ -49,7 +51,9 @@ let currentDetection = null;
 let currentObligations = null;
 let currentPDFResult = null;
 let currentCanonResult = null;
+let currentTransactionRecord = null;
 let inputSource = 'text'; // 'text' | 'pdf'
+let lastTransactionHash = '0000000000000000'; // Genesis hash for chaining
 
 // ============================================================================
 // DOM Elements
@@ -84,6 +88,10 @@ const pdfPreviewSection = document.getElementById('pdf-preview-section');
 const pdfMetaDisplay = document.getElementById('pdf-meta');
 const extractedTextPreview = document.getElementById('extracted-text-preview');
 
+// Transaction record elements
+const generateTransactionCheckbox = document.getElementById('generate-transaction');
+const transactionHashDisplay = document.getElementById('transaction-hash');
+
 // ============================================================================
 // Initialize
 // ============================================================================
@@ -112,6 +120,12 @@ function init() {
   exportOperatorsBtn.addEventListener('click', exportOperators);
   exportObligationsBtn.addEventListener('click', exportObligations);
   exportBundleBtn.addEventListener('click', exportBundle);
+
+  // Transaction record export button (if exists)
+  const exportTransactionBtn = document.getElementById('export-transaction');
+  if (exportTransactionBtn) {
+    exportTransactionBtn.addEventListener('click', exportTransaction);
+  }
 
   updateCharCount();
 }
@@ -216,7 +230,7 @@ function hidePDFPreview() {
 // Review Execution
 // ============================================================================
 
-function runReview() {
+async function runReview() {
   let textToAnalyze;
 
   if (inputSource === 'pdf' && currentCanonResult) {
@@ -233,6 +247,35 @@ function runReview() {
   currentDetection = detectOperators(textToAnalyze);
   currentObligations = instantiateObligations(currentDetection.matches);
 
+  // Generate transaction record if checkbox is checked
+  if (generateTransactionCheckbox && generateTransactionCheckbox.checked) {
+    const detectionHash = await sha256Hash(JSON.stringify(currentDetection));
+    const obligationsHash = await sha256Hash(JSON.stringify(currentObligations));
+
+    currentTransactionRecord = await createTransactionRecord({
+      inputHash: currentDetection.input_hash,
+      inputLength: textToAnalyze.length,
+      inputFormat: inputSource === 'pdf' ? 'application/pdf' : 'text/plain',
+      detectionHash,
+      obligationsHash,
+      previousTransactionHash: lastTransactionHash,
+    });
+
+    // Update chain for next transaction
+    lastTransactionHash = currentTransactionRecord.chain.transaction_hash;
+
+    // Show transaction hash in footer
+    if (transactionHashDisplay) {
+      transactionHashDisplay.textContent = `TX: ${currentTransactionRecord.chain.transaction_hash}`;
+      transactionHashDisplay.classList.remove('hidden');
+    }
+  } else {
+    currentTransactionRecord = null;
+    if (transactionHashDisplay) {
+      transactionHashDisplay.classList.add('hidden');
+    }
+  }
+
   renderOperators();
   renderObligations();
   updateFooter();
@@ -245,6 +288,7 @@ function runReview() {
 function clearResults() {
   currentDetection = null;
   currentObligations = null;
+  currentTransactionRecord = null;
   operatorsSection.classList.add('hidden');
   obligationsSection.classList.add('hidden');
   exportSection.classList.add('hidden');
@@ -252,6 +296,9 @@ function clearResults() {
   obligationsTableBody.innerHTML = '';
   footerHash.textContent = 'Input hash: --';
   footerTimestamp.textContent = 'Timestamp: --';
+  if (transactionHashDisplay) {
+    transactionHashDisplay.classList.add('hidden');
+  }
 }
 
 // ============================================================================
@@ -399,15 +446,27 @@ async function exportBundle() {
     provenance = createTextProvenance(textHash, currentDetection.input_hash);
   }
 
-  const bundle = wrapWithProtocol(
-    {
-      detection: currentDetection,
-      obligations: currentObligations,
-    },
-    provenance
-  );
+  const bundleData = {
+    detection: currentDetection,
+    obligations: currentObligations,
+  };
+
+  // Include transaction record if generated
+  if (currentTransactionRecord) {
+    bundleData.transaction_record = currentTransactionRecord;
+  }
+
+  const bundle = wrapWithProtocol(bundleData, provenance);
 
   downloadJson(bundle, getExportFilename('bundle'));
+}
+
+function exportTransaction() {
+  if (!currentTransactionRecord) {
+    alert('No transaction record. Enable "Generate transaction record" and run a review first.');
+    return;
+  }
+  downloadJson(currentTransactionRecord, getExportFilename('transaction'));
 }
 
 // ============================================================================

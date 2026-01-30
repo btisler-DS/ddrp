@@ -183,7 +183,81 @@ See DDRP_v0_1_SPEC.md Section 4 for full details.
 
 ---
 
-## 7. Explicit Non-Goals
+## 7. Transaction Records (Optional)
+
+### 7.1 Purpose
+
+DDRP can optionally generate **transaction records** that create a local, append-only, cryptographically chained audit trail of executions.
+
+### 7.2 What Transaction Records Are
+
+- A local execution record
+- Cryptographically chained (SHA-256)
+- Tamper-evident sequencing
+- Independently verifiable
+- Fully offline
+
+### 7.3 What Transaction Records Are NOT
+
+| Not This | Reason |
+|----------|--------|
+| Compliance determination | Requires domain expertise |
+| Legal seal | Requires legal authority |
+| Trusted timestamp authority | No external attestation |
+| Blockchain | No distributed consensus |
+| Notarization | No legal standing |
+
+### 7.4 Transaction Record Structure
+
+```json
+{
+  "ddrp_version": "0.2.0",
+  "transaction_version": "0.2.0",
+  "transaction_id": "uuid-v4",
+  "timestamp_local": "ISO-8601",
+  "timezone": "UTC",
+  "input": {
+    "input_hash": "sha256-truncated",
+    "input_length": 1234,
+    "input_format": "text/plain | application/pdf"
+  },
+  "outputs": {
+    "detection_hash": "sha256-truncated",
+    "obligations_hash": "sha256-truncated"
+  },
+  "environment": {
+    "node_version": "v25.x.x",
+    "os": "platform",
+    "ddrp_version": "0.2.0"
+  },
+  "chain": {
+    "previous_transaction_hash": "sha256-truncated | 0000000000000000",
+    "transaction_hash": "sha256-truncated"
+  },
+  "disclaimer": "This record documents execution continuity only..."
+}
+```
+
+### 7.5 Chain Mechanics
+
+- First transaction uses genesis hash: `0000000000000000`
+- Each subsequent transaction includes hash of previous
+- Hash computed over all fields except `chain.transaction_hash`
+- Creates tamper-evident sequencing
+
+### 7.6 Verification
+
+```bash
+# Verify transaction chain integrity
+npx ts-node -e "
+const { verifyTransactionChain } = require('./src/transaction_log_v0_2');
+console.log(verifyTransactionChain('./transactions'));
+"
+```
+
+---
+
+## 8. Explicit Non-Goals
 
 *(Extended from v0.1)*
 
@@ -194,10 +268,12 @@ See DDRP_v0_1_SPEC.md Section 4 for full details.
 | Form field extraction | Deferred to future version |
 | PDF annotation processing | Deferred to future version |
 | Complex layout handling | Text order may not match visual order |
+| Legal sealing | Requires external authority |
+| Compliance certification | Requires domain expertise |
 
 ---
 
-## 8. Rebuild Instructions
+## 9. Rebuild Instructions
 
 ### Prerequisites
 
@@ -267,7 +343,7 @@ ddrp/
 
 ---
 
-## 9. Citation
+## 10. Citation
 
 If you use DDRP in academic work, please cite:
 
@@ -287,7 +363,7 @@ Plain text:
 
 ---
 
-## 10. Licensing and Attribution
+## 11. Licensing and Attribution
 
 DDRP is released as a non-commercial open-source protocol under CC-BY-NC-4.0.
 

@@ -83,4 +83,23 @@ These hashes are for traceability only, not cryptographic sealing.
 
 ---
 
+## Transaction Records (v0.2)
+
+DDRP can optionally generate transaction records that:
+
+- Document execution continuity
+- Cryptographically chain inputs, outputs, and timestamps
+- Provide tamper-evident sequencing
+
+Transaction records **do not**:
+
+- Constitute notarization
+- Provide legal certification
+- Act as a trusted timestamp authority
+- Create compliance evidence
+
+Transaction records provide **execution traceability only** and do not assert compliance, correctness, or legal validity.
+
+---
+
 **By using DDRP, you acknowledge and accept these terms.**

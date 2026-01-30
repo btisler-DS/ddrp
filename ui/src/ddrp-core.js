@@ -855,6 +855,89 @@ export function instantiateObligations(matches) {
 }
 
 // ============================================================================
+// Transaction Record (DTR) - Browser Version
+// ============================================================================
+
+export const TRANSACTION_VERSION = '0.2.0';
+const GENESIS_HASH = '0000000000000000';
+const DTR_DISCLAIMER = 'This record documents execution continuity only. It does not assert compliance, correctness, or legal validity.';
+
+/**
+ * Generate UUID v4 for transaction ID.
+ */
+function generateTransactionId() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+/**
+ * Create a transaction record for browser use.
+ * Note: Browser version does not chain to previous transactions (no local storage).
+ * For full chaining, use the Node.js transaction_log_v0_2.ts module.
+ */
+export async function createTransactionRecord(options) {
+  const {
+    inputHash,
+    inputLength,
+    inputFormat,
+    detectionHash,
+    obligationsHash,
+    previousTransactionHash = GENESIS_HASH,
+  } = options;
+
+  const partialRecord = {
+    ddrp_version: DDRP_VERSION,
+    transaction_version: TRANSACTION_VERSION,
+    transaction_id: generateTransactionId(),
+    timestamp_local: new Date().toISOString(),
+    timezone: 'UTC',
+    input: {
+      input_hash: inputHash,
+      input_length: inputLength,
+      input_format: inputFormat,
+    },
+    outputs: {
+      detection_hash: detectionHash,
+      obligations_hash: obligationsHash,
+    },
+    environment: {
+      browser: navigator.userAgent.substring(0, 100),
+      ddrp_version: DDRP_VERSION,
+    },
+    chain: {
+      previous_transaction_hash: previousTransactionHash,
+    },
+    disclaimer: DTR_DISCLAIMER,
+  };
+
+  // Hash the transaction content
+  const contentToHash = JSON.stringify({
+    ddrp_version: partialRecord.ddrp_version,
+    transaction_version: partialRecord.transaction_version,
+    transaction_id: partialRecord.transaction_id,
+    timestamp_local: partialRecord.timestamp_local,
+    timezone: partialRecord.timezone,
+    input: partialRecord.input,
+    outputs: partialRecord.outputs,
+    environment: partialRecord.environment,
+    previous_transaction_hash: partialRecord.chain.previous_transaction_hash,
+  });
+
+  const transactionHash = await sha256Hash(contentToHash);
+
+  return {
+    ...partialRecord,
+    chain: {
+      previous_transaction_hash: previousTransactionHash,
+      transaction_hash: transactionHash,
+    },
+  };
+}
+
+// ============================================================================
 // Exports
 // ============================================================================
 
