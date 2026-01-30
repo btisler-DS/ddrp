@@ -6,6 +6,25 @@
 
 ---
 
+## About This Repository
+
+**This is a reference implementation, not a product.**
+
+If you're looking for a turnkey document review solution, this isn't it. DDRP is architectural infrastructure—a working example of how to build deterministic, auditable text analysis without semantic inference. Think of it like publishing a cryptographic library: it doesn't solve your whole problem, but if you need this specific capability (reproducible detection of obligation-creating language with full audit trails), here's a rigorously tested pattern you can adapt.
+
+**What this demonstrates:**
+- That fully deterministic document structure extraction is achievable (49 lexical patterns, zero probabilistic components)
+- How to instrument it for accountability (transaction logs, hash chains, hostile audit methodology)
+- How to make it adaptable (versioned specs, modifiable pattern registries, domain-specific customization)
+
+**Who this is for:** Regulatory agencies, compliance departments, or research teams who need to process documents reproducibly and can't rely on "the AI said so" explanations. If you need to defend your analysis in court, cite it in policy, or build institutional knowledge into executable patterns, this architecture might matter to you.
+
+**What this is not:** A compliance solution, a legal opinion, or a finished product. It detects lexical patterns and tracks structural completeness. It deliberately refuses to interpret meaning, assess correctness, or make recommendations. These limitations are design features, not bugs.
+
+**How to evaluate this:** Don't ask "can DDRP review my documents?" Ask "do I need deterministic, falsifiable document structure extraction as a component in my system?" If yes, examine the code, run the hostile audit, and decide if this pattern fits your requirements. Fork it, adapt it, or use it as a reference for building your own. That's the point.
+
+---
+
 ## What DDRP Is
 
 DDRP is a procedural accountability instrument that generates deterministic,
