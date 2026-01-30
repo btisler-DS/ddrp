@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DDRP v0.1 — Deterministic Document Review Protocol</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <header>
+    <h1>DDRP v0.1</h1>
+    <p>Deterministic Document Review Protocol</p>
+  </header>
+
+  <main>
+    <section id="self-test-section">
+      <h2>Protocol Self-Test</h2>
+      <button id="run-self-test">Run Protocol Self-Test</button>
+      <div id="self-test-result" class="result-box hidden"></div>
+    </section>
+
+    <section id="samples-section">
+      <h2>Known Test Inputs</h2>
+      <div id="sample-buttons"></div>
+    </section>
+
+    <section id="input-section">
+      <h2>Input Panel</h2>
+      <label for="document-input">Document text (processed verbatim)</label>
+      <textarea id="document-input" placeholder="Paste or type document text here..."></textarea>
+      <div id="input-meta">
+        <span id="char-count">0 characters</span>
+        <button id="load-file">Load .txt / .md file</button>
+        <input type="file" id="file-input" accept=".txt,.md" class="hidden">
+      </div>
+      <button id="run-review">Run Deterministic Review</button>
+    </section>
+
+    <section id="operators-section" class="hidden">
+      <h2>Operators Detected</h2>
+      <div id="operators-table-container">
+        <table id="operators-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Matched Text</th>
+              <th>Pattern ID</th>
+              <th>Char Range</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="obligations-section" class="hidden">
+      <h2>Obligations Instantiated</h2>
+      <div id="obligations-table-container">
+        <table id="obligations-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Required</th>
+              <th>Present</th>
+              <th>Missing</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="export-section" class="hidden">
+      <h2>Export Results</h2>
+      <div id="export-buttons">
+        <button id="export-operators">Export Operators (JSON)</button>
+        <button id="export-obligations">Export Obligations (JSON)</button>
+        <button id="export-bundle">Export Bundle (ZIP)</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div id="footer-meta">
+      <span id="footer-version">DDRP v0.1.0</span>
+      <span id="footer-patterns">Patterns: --</span>
+      <span id="footer-hash">Input hash: --</span>
+      <span id="footer-timestamp">Timestamp: --</span>
+    </div>
+    <div id="footer-links">
+      <a href="WARRANTY.md" target="_blank">Warranty & Non-Reliance</a>
+      <a href="ORG_EXPANSION.md" target="_blank">Organization Expansion Guide</a>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

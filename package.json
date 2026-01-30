@@ -7,7 +7,10 @@
     "build": "tsc",
     "verify": "ts-node src/verify_checkpoint.ts",
     "typecheck": "tsc --noEmit",
-    "hostile-audit": "ts-node tests/hostile_audit_v0_1/run_audit.ts"
+    "hostile-audit": "ts-node tests/hostile_audit_v0_1/run_audit.ts",
+    "ui": "cd ui && npm run dev",
+    "ui:build": "cd ui && npm run build",
+    "ui:install": "cd ui && npm install"
   },
   "keywords": [
     "document-review",
