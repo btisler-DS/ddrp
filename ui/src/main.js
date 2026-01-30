@@ -8,6 +8,9 @@
  * - PDF upload and text extraction
  * - Read-only preview of extracted text
  * - Chain-of-custody provenance in exports
+ * - Run isolation with UUID
+ * - Progressive disclosure
+ * - Structural integrity indicator
  */
 
 import {
@@ -29,8 +32,10 @@ import {
 } from './ddrp-core.js';
 
 // ============================================================================
-// Known Test Inputs (from tests/hostile_audit_v0_1/inputs/)
+// Constants
 // ============================================================================
+
+const MAX_VISIBLE_ROWS = 10;
 
 const KNOWN_SAMPLES = {
   'Semantic A': 'Users must submit identification within 30 days.',
@@ -47,6 +52,7 @@ const KNOWN_SAMPLES = {
 // State
 // ============================================================================
 
+let currentRunId = null;
 let currentDetection = null;
 let currentObligations = null;
 let currentPDFResult = null;
@@ -54,11 +60,20 @@ let currentCanonResult = null;
 let currentTransactionRecord = null;
 let inputSource = 'text'; // 'text' | 'pdf'
 let lastTransactionHash = '0000000000000000'; // Genesis hash for chaining
+let showAllOperators = false;
+let showAllObligations = false;
 
 // ============================================================================
 // DOM Elements
 // ============================================================================
 
+// Run control
+const startNewRunBtn = document.getElementById('start-new-run');
+const runIdDisplay = document.getElementById('run-id-display');
+const currentRunIdSpan = document.getElementById('current-run-id');
+
+// Input section
+const inputSection = document.getElementById('input-section');
 const documentInput = document.getElementById('document-input');
 const charCount = document.getElementById('char-count');
 const loadFileBtn = document.getElementById('load-file');
@@ -66,31 +81,156 @@ const fileInput = document.getElementById('file-input');
 const loadPdfBtn = document.getElementById('load-pdf');
 const pdfFileInput = document.getElementById('pdf-file-input');
 const runReviewBtn = document.getElementById('run-review');
+
+// Self-test
 const runSelfTestBtn = document.getElementById('run-self-test');
 const selfTestResult = document.getElementById('self-test-result');
+
+// Samples
 const sampleButtonsContainer = document.getElementById('sample-buttons');
+
+// PDF preview
+const pdfPreviewSection = document.getElementById('pdf-preview-section');
+const pdfMetaDisplay = document.getElementById('pdf-meta');
+const extractedTextPreview = document.getElementById('extracted-text-preview');
+
+// Run summary
+const runSummarySection = document.getElementById('run-summary-section');
+const integrityIndicator = document.getElementById('integrity-indicator');
+const integrityIcon = document.getElementById('integrity-icon');
+const integrityLabel = document.getElementById('integrity-label');
+
+// Summary fields
+const summarySource = document.getElementById('summary-source');
+const summaryPagesRow = document.getElementById('summary-pages-row');
+const summaryPages = document.getElementById('summary-pages');
+const summaryChars = document.getElementById('summary-chars');
+const summaryCanonRules = document.getElementById('summary-canon-rules');
+const summaryOperators = document.getElementById('summary-operators');
+const summaryObligations = document.getElementById('summary-obligations');
+const summarySatisfied = document.getElementById('summary-satisfied');
+const summaryOpen = document.getElementById('summary-open');
+const structuralProfile = document.getElementById('structural-profile');
+const summaryInputHash = document.getElementById('summary-input-hash');
+const summaryDetectionHash = document.getElementById('summary-detection-hash');
+const summaryObligationsHash = document.getElementById('summary-obligations-hash');
+const summaryTxRow = document.getElementById('summary-tx-row');
+const summaryTxHash = document.getElementById('summary-tx-hash');
+const summaryDeterministic = document.getElementById('summary-deterministic');
+
+// Operators table
 const operatorsSection = document.getElementById('operators-section');
+const operatorsCountBadge = document.getElementById('operators-count-badge');
 const operatorsTableBody = document.querySelector('#operators-table tbody');
+const operatorsTableFooter = document.getElementById('operators-table-footer');
+const showAllOperatorsBtn = document.getElementById('show-all-operators');
+const operatorsTotal = document.getElementById('operators-total');
+
+// Obligations table
 const obligationsSection = document.getElementById('obligations-section');
+const obligationsCountBadge = document.getElementById('obligations-count-badge');
 const obligationsTableBody = document.querySelector('#obligations-table tbody');
+const obligationsTableFooter = document.getElementById('obligations-table-footer');
+const showAllObligationsBtn = document.getElementById('show-all-obligations');
+const obligationsTotal = document.getElementById('obligations-total');
+
+// Export
 const exportSection = document.getElementById('export-section');
 const exportOperatorsBtn = document.getElementById('export-operators');
 const exportObligationsBtn = document.getElementById('export-obligations');
 const exportBundleBtn = document.getElementById('export-bundle');
+const exportTransactionBtn = document.getElementById('export-transaction');
+
+// Footer
 const footerVersion = document.getElementById('footer-version');
 const footerPatterns = document.getElementById('footer-patterns');
 const footerHash = document.getElementById('footer-hash');
 const footerTimestamp = document.getElementById('footer-timestamp');
 const footerDoi = document.getElementById('footer-doi');
-
-// PDF-specific elements
-const pdfPreviewSection = document.getElementById('pdf-preview-section');
-const pdfMetaDisplay = document.getElementById('pdf-meta');
-const extractedTextPreview = document.getElementById('extracted-text-preview');
-
-// Transaction record elements
-const generateTransactionCheckbox = document.getElementById('generate-transaction');
 const transactionHashDisplay = document.getElementById('transaction-hash');
+
+// Transaction checkbox
+const generateTransactionCheckbox = document.getElementById('generate-transaction');
+
+// ============================================================================
+// UUID Generation
+// ============================================================================
+
+function generateRunId() {
+  // Generate UUID v4
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+// ============================================================================
+// Run Isolation
+// ============================================================================
+
+function startNewRun() {
+  // Generate new run ID
+  currentRunId = generateRunId();
+
+  // Clear all prior state
+  currentDetection = null;
+  currentObligations = null;
+  currentPDFResult = null;
+  currentCanonResult = null;
+  currentTransactionRecord = null;
+  inputSource = 'text';
+  lastTransactionHash = '0000000000000000';
+  showAllOperators = false;
+  showAllObligations = false;
+
+  // Clear input
+  documentInput.value = '';
+  updateCharCount();
+
+  // Hide PDF preview
+  hidePDFPreview();
+
+  // Hide results
+  clearResults();
+
+  // Display run ID
+  currentRunIdSpan.textContent = currentRunId;
+  runIdDisplay.classList.remove('hidden');
+
+  // Enable input section
+  enableInputSection();
+
+  // Disable review button until input is provided
+  runReviewBtn.disabled = true;
+}
+
+function enableInputSection() {
+  inputSection.classList.remove('disabled-section');
+  documentInput.disabled = false;
+  loadFileBtn.disabled = false;
+  loadPdfBtn.disabled = false;
+}
+
+function disableInputSection() {
+  inputSection.classList.add('disabled-section');
+  documentInput.disabled = true;
+  loadFileBtn.disabled = true;
+  loadPdfBtn.disabled = true;
+  runReviewBtn.disabled = true;
+}
+
+function updateReviewButtonState() {
+  if (!currentRunId) {
+    runReviewBtn.disabled = true;
+    return;
+  }
+
+  const hasTextInput = documentInput.value.trim().length > 0;
+  const hasPdfInput = inputSource === 'pdf' && currentCanonResult !== null;
+
+  runReviewBtn.disabled = !(hasTextInput || hasPdfInput);
+}
 
 // ============================================================================
 // Initialize
@@ -110,7 +250,11 @@ function init() {
   }
 
   // Event listeners
-  documentInput.addEventListener('input', updateCharCount);
+  startNewRunBtn.addEventListener('click', startNewRun);
+  documentInput.addEventListener('input', () => {
+    updateCharCount();
+    updateReviewButtonState();
+  });
   loadFileBtn.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', handleFileLoad);
   loadPdfBtn.addEventListener('click', () => pdfFileInput.click());
@@ -121,13 +265,29 @@ function init() {
   exportObligationsBtn.addEventListener('click', exportObligations);
   exportBundleBtn.addEventListener('click', exportBundle);
 
-  // Transaction record export button (if exists)
-  const exportTransactionBtn = document.getElementById('export-transaction');
   if (exportTransactionBtn) {
     exportTransactionBtn.addEventListener('click', exportTransaction);
   }
 
+  // Progressive disclosure buttons
+  if (showAllOperatorsBtn) {
+    showAllOperatorsBtn.addEventListener('click', () => {
+      showAllOperators = true;
+      renderOperators();
+    });
+  }
+
+  if (showAllObligationsBtn) {
+    showAllObligationsBtn.addEventListener('click', () => {
+      showAllObligations = true;
+      renderObligations();
+    });
+  }
+
   updateCharCount();
+
+  // Start in disabled state - require explicit run start
+  disableInputSection();
 }
 
 // ============================================================================
@@ -140,6 +300,11 @@ function updateCharCount() {
 }
 
 function loadSample(name, text) {
+  if (!currentRunId) {
+    alert('Please start a new run first.');
+    return;
+  }
+
   documentInput.value = text;
   inputSource = 'text';
   currentPDFResult = null;
@@ -147,11 +312,18 @@ function loadSample(name, text) {
   hidePDFPreview();
   updateCharCount();
   clearResults();
+  updateReviewButtonState();
 }
 
 function handleFileLoad(e) {
   const file = e.target.files[0];
   if (!file) return;
+
+  if (!currentRunId) {
+    alert('Please start a new run first.');
+    fileInput.value = '';
+    return;
+  }
 
   const reader = new FileReader();
   reader.onload = (event) => {
@@ -162,6 +334,7 @@ function handleFileLoad(e) {
     hidePDFPreview();
     updateCharCount();
     clearResults();
+    updateReviewButtonState();
   };
   reader.readAsText(file);
   fileInput.value = '';
@@ -170,6 +343,12 @@ function handleFileLoad(e) {
 async function handlePDFLoad(e) {
   const file = e.target.files[0];
   if (!file) return;
+
+  if (!currentRunId) {
+    alert('Please start a new run first.');
+    pdfFileInput.value = '';
+    return;
+  }
 
   pdfFileInput.value = '';
 
@@ -188,6 +367,7 @@ async function handlePDFLoad(e) {
     displayPDFMeta(file.name);
     displayExtractedText();
     clearResults();
+    updateReviewButtonState();
   } catch (err) {
     alert(`Failed to load PDF: ${err.message}`);
   }
@@ -231,12 +411,20 @@ function hidePDFPreview() {
 // ============================================================================
 
 async function runReview() {
+  if (!currentRunId) {
+    alert('Please start a new run first.');
+    return;
+  }
+
   let textToAnalyze;
+  let inputLength;
 
   if (inputSource === 'pdf' && currentCanonResult) {
     textToAnalyze = currentCanonResult.canonical_text;
+    inputLength = currentCanonResult.canonical_length;
   } else {
     textToAnalyze = documentInput.value;
+    inputLength = textToAnalyze.length;
   }
 
   if (!textToAnalyze.trim()) {
@@ -247,14 +435,15 @@ async function runReview() {
   currentDetection = detectOperators(textToAnalyze);
   currentObligations = instantiateObligations(currentDetection.matches);
 
+  // Compute hashes for continuity tracking
+  const detectionHash = await sha256Hash(JSON.stringify(currentDetection));
+  const obligationsHash = await sha256Hash(JSON.stringify(currentObligations));
+
   // Generate transaction record if checkbox is checked
   if (generateTransactionCheckbox && generateTransactionCheckbox.checked) {
-    const detectionHash = await sha256Hash(JSON.stringify(currentDetection));
-    const obligationsHash = await sha256Hash(JSON.stringify(currentObligations));
-
     currentTransactionRecord = await createTransactionRecord({
       inputHash: currentDetection.input_hash,
-      inputLength: textToAnalyze.length,
+      inputLength: inputLength,
       inputFormat: inputSource === 'pdf' ? 'application/pdf' : 'text/plain',
       detectionHash,
       obligationsHash,
@@ -276,10 +465,14 @@ async function runReview() {
     }
   }
 
+  // Render results
+  renderSummary(detectionHash, obligationsHash);
   renderOperators();
   renderObligations();
   updateFooter();
 
+  // Show sections
+  runSummarySection.classList.remove('hidden');
   operatorsSection.classList.remove('hidden');
   obligationsSection.classList.remove('hidden');
   exportSection.classList.remove('hidden');
@@ -289,26 +482,176 @@ function clearResults() {
   currentDetection = null;
   currentObligations = null;
   currentTransactionRecord = null;
+  showAllOperators = false;
+  showAllObligations = false;
+
+  runSummarySection.classList.add('hidden');
   operatorsSection.classList.add('hidden');
   obligationsSection.classList.add('hidden');
   exportSection.classList.add('hidden');
+
   operatorsTableBody.innerHTML = '';
   obligationsTableBody.innerHTML = '';
+
   footerHash.textContent = 'Input hash: --';
   footerTimestamp.textContent = 'Timestamp: --';
+
   if (transactionHashDisplay) {
     transactionHashDisplay.classList.add('hidden');
   }
 }
 
 // ============================================================================
+// Structural Integrity Calculation
+// ============================================================================
+
+function calculateIntegrity(detection, obligations) {
+  // Count operators by type
+  const opCounts = {};
+  for (const op of detection.matches) {
+    opCounts[op.op_type] = (opCounts[op.op_type] || 0) + 1;
+  }
+
+  // Count obligation statuses
+  let satisfiedCount = 0;
+  let openCount = 0;
+  for (const obl of obligations.obligations) {
+    if (obl.status === 'SATISFIED') {
+      satisfiedCount++;
+    } else if (obl.status === 'OPEN') {
+      openCount++;
+    }
+  }
+
+  const totalObligations = obligations.obligation_count;
+  const totalOperators = detection.matches.length;
+
+  // Integrity rules (structural only, no interpretation):
+  // - CORRUPTED: No operators detected on non-empty input (structural absence)
+  // - FLAWED: >50% of obligations are OPEN
+  // - ABNORMAL: Any obligations are OPEN
+  // - NORMAL: All obligations SATISFIED (or no obligations)
+
+  if (totalOperators === 0) {
+    return {
+      state: 'corrupted',
+      label: 'Corrupted',
+      description: 'No structural operators detected'
+    };
+  }
+
+  if (totalObligations > 0) {
+    const openRatio = openCount / totalObligations;
+
+    if (openRatio > 0.5) {
+      return {
+        state: 'flawed',
+        label: 'Flawed',
+        description: `${openCount} of ${totalObligations} obligations unresolved`
+      };
+    }
+
+    if (openCount > 0) {
+      return {
+        state: 'abnormal',
+        label: 'Abnormal',
+        description: `${openCount} obligation(s) unresolved`
+      };
+    }
+  }
+
+  return {
+    state: 'normal',
+    label: 'Normal',
+    description: 'All structural obligations resolved'
+  };
+}
+
+// ============================================================================
 // Rendering
 // ============================================================================
+
+function renderSummary(detectionHash, obligationsHash) {
+  // Input card
+  summarySource.textContent = inputSource === 'pdf' ? 'PDF' : 'Text';
+
+  if (inputSource === 'pdf' && currentPDFResult) {
+    summaryPagesRow.classList.remove('hidden');
+    summaryPages.textContent = currentPDFResult.page_count;
+  } else {
+    summaryPagesRow.classList.add('hidden');
+  }
+
+  const charLength = inputSource === 'pdf' && currentCanonResult
+    ? currentCanonResult.canonical_length
+    : documentInput.value.length;
+  summaryChars.textContent = charLength.toLocaleString();
+  summaryCanonRules.textContent = CANON_RULE_COUNT;
+
+  // Signals card
+  summaryOperators.textContent = currentDetection.matches.length;
+  summaryObligations.textContent = currentObligations.obligation_count;
+
+  let satisfiedCount = 0;
+  let openCount = 0;
+  for (const obl of currentObligations.obligations) {
+    if (obl.status === 'SATISFIED') satisfiedCount++;
+    else if (obl.status === 'OPEN') openCount++;
+  }
+  summarySatisfied.textContent = satisfiedCount;
+  summaryOpen.textContent = openCount;
+
+  // Structural profile card
+  const opCounts = {};
+  for (const op of currentDetection.matches) {
+    opCounts[op.op_type] = (opCounts[op.op_type] || 0) + 1;
+  }
+
+  structuralProfile.innerHTML = '';
+  const opTypes = ['REQ', 'DEF', 'CAUSE', 'SCOPE', 'UNIV', 'ANCHOR'];
+  for (const opType of opTypes) {
+    const count = opCounts[opType] || 0;
+    const div = document.createElement('div');
+    div.className = 'profile-item';
+    div.innerHTML = `<span>${opType}:</span><span>${count}</span>`;
+    structuralProfile.appendChild(div);
+  }
+
+  // Continuity card
+  summaryInputHash.textContent = currentDetection.input_hash;
+  summaryDetectionHash.textContent = detectionHash.slice(0, 16);
+  summaryObligationsHash.textContent = obligationsHash.slice(0, 16);
+
+  if (currentTransactionRecord) {
+    summaryTxRow.classList.remove('hidden');
+    summaryTxHash.textContent = currentTransactionRecord.chain.transaction_hash;
+  } else {
+    summaryTxRow.classList.add('hidden');
+  }
+
+  summaryDeterministic.textContent = '\u2714'; // Checkmark
+
+  // Integrity indicator
+  const integrity = calculateIntegrity(currentDetection, currentObligations);
+
+  // Remove all integrity classes
+  integrityIndicator.classList.remove('integrity-normal', 'integrity-abnormal', 'integrity-flawed', 'integrity-corrupted');
+  integrityIndicator.classList.add(`integrity-${integrity.state}`);
+
+  integrityLabel.textContent = `${integrity.label}: ${integrity.description}`;
+}
 
 function renderOperators() {
   operatorsTableBody.innerHTML = '';
 
-  for (const op of currentDetection.matches) {
+  const operators = currentDetection.matches;
+  const total = operators.length;
+  const visibleCount = showAllOperators ? total : Math.min(total, MAX_VISIBLE_ROWS);
+
+  operatorsCountBadge.textContent = `(${total})`;
+
+  for (let i = 0; i < visibleCount; i++) {
+    const op = operators[i];
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${escapeHtml(op.op_type)}</td>
@@ -318,12 +661,27 @@ function renderOperators() {
     `;
     operatorsTableBody.appendChild(row);
   }
+
+  // Show/hide footer
+  if (total > MAX_VISIBLE_ROWS && !showAllOperators) {
+    operatorsTotal.textContent = total;
+    operatorsTableFooter.classList.remove('hidden');
+  } else {
+    operatorsTableFooter.classList.add('hidden');
+  }
 }
 
 function renderObligations() {
   obligationsTableBody.innerHTML = '';
 
-  for (const obl of currentObligations.obligations) {
+  const obligations = currentObligations.obligations;
+  const total = obligations.length;
+  const visibleCount = showAllObligations ? total : Math.min(total, MAX_VISIBLE_ROWS);
+
+  obligationsCountBadge.textContent = `(${total})`;
+
+  for (let i = 0; i < visibleCount; i++) {
+    const obl = obligations[i];
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${escapeHtml(obl.obl_id)}</td>
@@ -334,6 +692,14 @@ function renderObligations() {
       <td>${escapeHtml(obl.missing_fields.join(', ') || '(none)')}</td>
     `;
     obligationsTableBody.appendChild(row);
+  }
+
+  // Show/hide footer
+  if (total > MAX_VISIBLE_ROWS && !showAllObligations) {
+    obligationsTotal.textContent = total;
+    obligationsTableFooter.classList.remove('hidden');
+  } else {
+    obligationsTableFooter.classList.add('hidden');
   }
 }
 
@@ -397,7 +763,8 @@ function runSelfTest() {
 function getExportFilename(type) {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const hash = currentDetection?.input_hash || 'unknown';
-  return `ddrp-v${DDRP_VERSION}-${type}-${hash}-${timestamp}`;
+  const runSuffix = currentRunId ? `-${currentRunId.slice(0, 8)}` : '';
+  return `ddrp-v${DDRP_VERSION}-${type}-${hash}${runSuffix}-${timestamp}`;
 }
 
 function downloadJson(data, filename) {
@@ -447,6 +814,7 @@ async function exportBundle() {
   }
 
   const bundleData = {
+    run_id: currentRunId,
     detection: currentDetection,
     obligations: currentObligations,
   };

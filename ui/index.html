@@ -10,40 +10,54 @@
   <header>
     <h1>DDRP v0.2</h1>
     <p>Deterministic Document Review Protocol</p>
+    <div id="run-id-display" class="hidden">
+      <span class="run-label">Run ID:</span>
+      <span id="current-run-id">--</span>
+    </div>
   </header>
 
   <main>
+    <!-- Run Isolation Control -->
+    <section id="run-control-section">
+      <button id="start-new-run" class="primary-button">Start New Deterministic Run</button>
+      <p class="run-hint">Clears all state and generates a new Run ID</p>
+    </section>
+
+    <!-- Self-Test Section -->
     <section id="self-test-section">
       <h2>Protocol Self-Test</h2>
       <button id="run-self-test">Run Protocol Self-Test</button>
       <div id="self-test-result" class="result-box hidden"></div>
     </section>
 
+    <!-- Known Samples -->
     <section id="samples-section">
       <h2>Known Test Inputs</h2>
       <div id="sample-buttons"></div>
     </section>
 
-    <section id="input-section">
+    <!-- Input Panel -->
+    <section id="input-section" class="disabled-section">
       <h2>Input Panel</h2>
       <label for="document-input">Document text (processed verbatim)</label>
-      <textarea id="document-input" placeholder="Paste or type document text here..."></textarea>
+      <textarea id="document-input" placeholder="Start a new run, then paste or type document text here..." disabled></textarea>
       <div id="input-meta">
         <span id="char-count">0 characters</span>
-        <button id="load-file">Load .txt / .md</button>
+        <button id="load-file" disabled>Load .txt / .md</button>
         <input type="file" id="file-input" accept=".txt,.md" class="hidden">
-        <button id="load-pdf">Load PDF</button>
+        <button id="load-pdf" disabled>Load PDF</button>
         <input type="file" id="pdf-file-input" accept=".pdf" class="hidden">
       </div>
       <div id="review-options">
         <label>
-          <input type="checkbox" id="generate-transaction">
+          <input type="checkbox" id="generate-transaction" checked>
           Generate transaction record
         </label>
       </div>
-      <button id="run-review">Run Deterministic Review</button>
+      <button id="run-review" disabled>Run Deterministic Review</button>
     </section>
 
+    <!-- PDF Preview -->
     <section id="pdf-preview-section" class="hidden">
       <h2>PDF Extraction Result</h2>
       <div id="pdf-meta"></div>
@@ -51,8 +65,62 @@
       <textarea id="extracted-text-preview" readonly placeholder="Extracted PDF text will appear here..."></textarea>
     </section>
 
+    <!-- Run Summary Panel (appears after review) -->
+    <section id="run-summary-section" class="hidden">
+      <h2>Run Summary</h2>
+
+      <!-- Structural Integrity Indicator -->
+      <div id="integrity-indicator">
+        <span id="integrity-icon">●</span>
+        <span id="integrity-label">--</span>
+        <span id="integrity-tooltip" class="tooltip">
+          This indicator describes document structural integrity only.
+          It does not assess legality, correctness, or compliance.
+        </span>
+      </div>
+
+      <div id="summary-grid">
+        <!-- Input -->
+        <div class="summary-card">
+          <h3>Input</h3>
+          <div class="summary-row"><span>Source:</span><span id="summary-source">--</span></div>
+          <div class="summary-row" id="summary-pages-row"><span>Pages:</span><span id="summary-pages">--</span></div>
+          <div class="summary-row"><span>Characters:</span><span id="summary-chars">--</span></div>
+          <div class="summary-row"><span>Canon rules:</span><span id="summary-canon-rules">--</span></div>
+        </div>
+
+        <!-- Signals Detected -->
+        <div class="summary-card">
+          <h3>Signals Detected</h3>
+          <div class="summary-row"><span>Operators:</span><span id="summary-operators">--</span></div>
+          <div class="summary-row"><span>Obligations:</span><span id="summary-obligations">--</span></div>
+          <div class="summary-row status-satisfied"><span>SATISFIED:</span><span id="summary-satisfied">--</span></div>
+          <div class="summary-row status-open"><span>OPEN:</span><span id="summary-open">--</span></div>
+        </div>
+
+        <!-- Structural Profile -->
+        <div class="summary-card">
+          <h3>Structural Profile</h3>
+          <div id="structural-profile">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Continuity -->
+        <div class="summary-card">
+          <h3>Continuity</h3>
+          <div class="summary-row"><span>Input hash:</span><span id="summary-input-hash">--</span></div>
+          <div class="summary-row"><span>Detection hash:</span><span id="summary-detection-hash">--</span></div>
+          <div class="summary-row"><span>Obligations hash:</span><span id="summary-obligations-hash">--</span></div>
+          <div class="summary-row" id="summary-tx-row"><span>Transaction hash:</span><span id="summary-tx-hash">--</span></div>
+          <div class="summary-row"><span>Deterministic:</span><span id="summary-deterministic">✔</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Operators Table -->
     <section id="operators-section" class="hidden">
-      <h2>Operators Detected</h2>
+      <h2>Operators Detected <span id="operators-count-badge" class="count-badge">(0)</span></h2>
       <div id="operators-table-container">
         <table id="operators-table">
           <thead>
@@ -66,10 +134,14 @@
           <tbody></tbody>
         </table>
       </div>
+      <div id="operators-table-footer" class="table-footer hidden">
+        <button id="show-all-operators">Show all (<span id="operators-total">0</span>)</button>
+      </div>
     </section>
 
+    <!-- Obligations Table -->
     <section id="obligations-section" class="hidden">
-      <h2>Obligations Instantiated</h2>
+      <h2>Obligations Instantiated <span id="obligations-count-badge" class="count-badge">(0)</span></h2>
       <div id="obligations-table-container">
         <table id="obligations-table">
           <thead>
@@ -85,8 +157,12 @@
           <tbody></tbody>
         </table>
       </div>
+      <div id="obligations-table-footer" class="table-footer hidden">
+        <button id="show-all-obligations">Show all (<span id="obligations-total">0</span>)</button>
+      </div>
     </section>
 
+    <!-- Export Section -->
     <section id="export-section" class="hidden">
       <h2>Export Results</h2>
       <div id="export-buttons">
@@ -105,7 +181,7 @@
       <span id="footer-hash">Input hash: --</span>
       <span id="footer-timestamp">Timestamp: --</span>
       <span id="transaction-hash" class="hidden">TX: --</span>
-      <span id="footer-doi">DOI: unassigned</span>
+      <span id="footer-doi">DOI: 10.5281/zenodo.18427220</span>
     </div>
     <div id="footer-links">
       <a href="USER_GUIDE.md" target="_blank">User Guide</a>

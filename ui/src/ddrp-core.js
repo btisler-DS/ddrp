@@ -59,8 +59,8 @@ function simpleHash(str) {
 export const PROTOCOL_META = {
   name: 'DDRP',
   version: '0.2.0',
-  doi: null,
-  doi_status: 'unassigned',
+  doi: '10.5281/zenodo.18427220',
+  doi_status: 'assigned',
   spec_url: 'https://github.com/btisler-DS/ddrp',
 };
 
