@@ -8,13 +8,38 @@
 
 ## What DDRP Is
 
-DDRP is a **deterministic protocol** for structurally reviewing documents. It detects linguistic operators that create obligations and evaluates whether those obligations are structurally resolved.
+DDRP is a procedural accountability instrument that generates deterministic,
+inspectable artifacts recording whether obligation-creating language was emitted
+and whether it was structurally resolved.
+
+It is designed to support post-hoc inspection and reconstruction of epistemic
+care, especially in high-stakes or AI-mediated contexts, without interpreting
+meaning or making semantic judgments.
 
 DDRP produces **inspectable, reproducible artifacts**:
 - Operator detection results (REQ, DEF, CAUSE, SCOPE, UNIV, ANCHOR)
 - Obligation instantiation with status (SATISFIED, OPEN)
 - Cryptographically chained transaction records
-- SHA-256 hashes for chain-of-custody
+- SHA-256 hashes for traceability
+
+> **Note:** In DDRP, "obligation" refers to a structural linguistic pattern
+> (e.g., requirement operators), not a legal or normative determination.
+
+---
+
+## What DDRP Is For
+
+DDRP exists to make it possible to reconstruct whether procedural care was
+exercised when obligation-creating language appeared in an artifact.
+
+It answers questions such as:
+- Did obligation-creating language appear?
+- Were those obligations structurally resolved or left open?
+- Was this detectable at the time of production?
+
+It does not answer whether the obligation was correct, valid, legal, or intended.
+
+---
 
 ## What DDRP Is Not
 
@@ -22,11 +47,15 @@ DDRP produces **inspectable, reproducible artifacts**:
 |---------------|--------|
 | Interpret meaning | Lexical detection only |
 | Assert compliance | No legal authority |
-| Make recommendations | Structural analysis only |
+| Make recommendations | Structural observation only |
 | Use AI/ML | Deterministic pattern matching |
 | Provide risk scores | No subjective weighting |
+| Assess document quality | Structural observations, not evaluations |
 
 **Human judgment is always required.**
+
+DDRP intentionally trades coverage and linguistic sophistication for
+determinism and inspectability. This is a design constraint, not a limitation.
 
 ---
 
@@ -223,9 +252,10 @@ DDRP **does not**:
 
 1. **Interpret meaning** — Detection is lexical, not semantic
 2. **Assert compliance** — No legal or regulatory authority
-3. **Certify correctness** — Structural analysis only
+3. **Certify correctness** — Structural observation only
 4. **Provide recommendations** — No advisory function
 5. **Seal documents legally** — Transaction records are for traceability only
+6. **Assess document quality, completeness, or correctness** — Outputs are structural observations, not evaluations
 
 ---
 

@@ -6,6 +6,17 @@ Status: Frozen
 
 ---
 
+### Governance Context
+
+This specification defines DDRP as a deterministic protocol for producing
+inspectable, non-semantic artifacts that record the presence and resolution
+state of obligation-creating language.
+
+The purpose of these artifacts is procedural accountability and post-hoc
+inspection, not interpretation, correctness evaluation, or compliance claims.
+
+---
+
 ## Version Lock Notice
 
 > **DDRP v0.2 behavior is frozen.**

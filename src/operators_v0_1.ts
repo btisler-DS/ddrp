@@ -17,6 +17,10 @@
  * Finer scope binding (sentence/section) is deferred.
  */
 
+// DDRP is intentionally deterministic and non-semantic.
+// It functions as a governance primitive for procedural reconstruction,
+// not as a document analysis or language understanding system.
+
 // ============================================================================
 // Types
 // ============================================================================

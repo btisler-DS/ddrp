@@ -272,8 +272,8 @@ button:disabled:hover {
   background: #fafafa;
 }
 
-/* Structural Integrity Indicator */
-#integrity-indicator {
+/* Structural Resolution State Indicator */
+#resolution-indicator {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -284,11 +284,11 @@ button:disabled:hover {
   font-weight: 600;
 }
 
-#integrity-icon {
+#resolution-icon {
   font-size: 1.25rem;
 }
 
-#integrity-label {
+#resolution-label {
   flex: 1;
 }
 
@@ -299,11 +299,11 @@ button:disabled:hover {
   max-width: 300px;
 }
 
-/* Integrity states */
-.integrity-normal #integrity-icon { color: var(--success); }
-.integrity-abnormal #integrity-icon { color: var(--warning); }
-.integrity-flawed #integrity-icon { color: var(--caution); }
-.integrity-corrupted #integrity-icon { color: var(--danger); }
+/* Resolution states */
+.resolution-normal #resolution-icon { color: var(--success); }
+.resolution-abnormal #resolution-icon { color: var(--warning); }
+.resolution-flawed #resolution-icon { color: var(--caution); }
+.resolution-corrupted #resolution-icon { color: var(--danger); }
 
 /* Summary Grid */
 #summary-grid {
@@ -501,7 +501,7 @@ footer {
     grid-template-columns: 1fr;
   }
 
-  #integrity-indicator {
+  #resolution-indicator {
     flex-wrap: wrap;
   }
 

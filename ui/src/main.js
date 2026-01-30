@@ -96,9 +96,9 @@ const extractedTextPreview = document.getElementById('extracted-text-preview');
 
 // Run summary
 const runSummarySection = document.getElementById('run-summary-section');
-const integrityIndicator = document.getElementById('integrity-indicator');
-const integrityIcon = document.getElementById('integrity-icon');
-const integrityLabel = document.getElementById('integrity-label');
+const resolutionIndicator = document.getElementById('resolution-indicator');
+const resolutionIcon = document.getElementById('resolution-icon');
+const resolutionLabel = document.getElementById('resolution-label');
 
 // Summary fields
 const summarySource = document.getElementById('summary-source');
@@ -502,10 +502,10 @@ function clearResults() {
 }
 
 // ============================================================================
-// Structural Integrity Calculation
+// Structural Resolution State Calculation
 // ============================================================================
 
-function calculateIntegrity(detection, obligations) {
+function calculateResolutionState(detection, obligations) {
   // Count operators by type
   const opCounts = {};
   for (const op of detection.matches) {
@@ -526,7 +526,7 @@ function calculateIntegrity(detection, obligations) {
   const totalObligations = obligations.obligation_count;
   const totalOperators = detection.matches.length;
 
-  // Integrity rules (structural only, no interpretation):
+  // Resolution state rules (structural only, no interpretation):
   // - CORRUPTED: No operators detected on non-empty input (structural absence)
   // - FLAWED: >50% of obligations are OPEN
   // - ABNORMAL: Any obligations are OPEN
@@ -631,14 +631,14 @@ function renderSummary(detectionHash, obligationsHash) {
 
   summaryDeterministic.textContent = '\u2714'; // Checkmark
 
-  // Integrity indicator
-  const integrity = calculateIntegrity(currentDetection, currentObligations);
+  // Resolution state indicator
+  const resolution = calculateResolutionState(currentDetection, currentObligations);
 
-  // Remove all integrity classes
-  integrityIndicator.classList.remove('integrity-normal', 'integrity-abnormal', 'integrity-flawed', 'integrity-corrupted');
-  integrityIndicator.classList.add(`integrity-${integrity.state}`);
+  // Remove all resolution classes
+  resolutionIndicator.classList.remove('resolution-normal', 'resolution-abnormal', 'resolution-flawed', 'resolution-corrupted');
+  resolutionIndicator.classList.add(`resolution-${resolution.state}`);
 
-  integrityLabel.textContent = `${integrity.label}: ${integrity.description}`;
+  resolutionLabel.textContent = `${resolution.label}: ${resolution.description}`;
 }
 
 function renderOperators() {
