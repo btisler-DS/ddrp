@@ -280,6 +280,15 @@ DDRP **does not**:
 
 ## Documentation
 
+### Walkthroughs
+
+| Document | Description |
+|----------|-------------|
+| [DDRP_Walk_Through.pdf](./DDRP_Walk_Through.pdf) | Guided introduction to the protocol |
+| [DDRP_Walk_Through_Run_Review.pdf](./DDRP_Walk_Through_Run_Review.pdf) | Step-by-step review execution guide |
+
+### Specifications & Guides
+
 | Document | Description |
 |----------|-------------|
 | [DDRP_v0_1_SPEC.md](./DDRP_v0_1_SPEC.md) | v0.1 specification (frozen) |
