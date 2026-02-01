@@ -3,6 +3,7 @@
 **Version:** 0.2.0
 **Status:** Released
 **DOI:** [10.5281/zenodo.18427220](https://doi.org/10.5281/zenodo.18427220)
+**Web:** [quantuminquiry.org/DDRP](https://quantuminquiry.org/DDRP/)
 
 ---
 
