@@ -13,8 +13,6 @@
 
 If you're looking for a turnkey document review solution, this isn't it. DDRP is architectural infrastructure—a working example of how to build deterministic, auditable text analysis without semantic inference. Think of it like publishing a cryptographic library: it doesn't solve your whole problem, but if you need this specific capability (reproducible detection of obligation-creating language with full audit trails), here's a rigorously tested pattern you can adapt.
 
-*---
-
 ## The Problem
 
 When documents contain obligation-creating languageâ€”requirements, definitions, commitments, specificationsâ€”how do you verify those obligations were actually addressed?
