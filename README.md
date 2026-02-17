@@ -13,132 +13,145 @@
 
 If you're looking for a turnkey document review solution, this isn't it. DDRP is architectural infrastructure—a working example of how to build deterministic, auditable text analysis without semantic inference. Think of it like publishing a cryptographic library: it doesn't solve your whole problem, but if you need this specific capability (reproducible detection of obligation-creating language with full audit trails), here's a rigorously tested pattern you can adapt.
 
-**What this demonstrates:**
-- That fully deterministic document structure extraction is achievable (49 lexical patterns, zero probabilistic components)
-- How to instrument it for accountability (transaction logs, hash chains, hostile audit methodology)
-- How to make it adaptable (versioned specs, modifiable pattern registries, domain-specific customization)
+*---
 
-**Who this is for:** Regulatory agencies, compliance departments, or research teams who need to process documents reproducibly and can't rely on "the AI said so" explanations. If you need to defend your analysis in court, cite it in policy, or build institutional knowledge into executable patterns, this architecture might matter to you.
+## The Problem
 
-**What this is not:** A compliance solution, a legal opinion, or a finished product. It detects lexical patterns and tracks structural completeness. It deliberately refuses to interpret meaning, assess correctness, or make recommendations. These limitations are design features, not bugs.
+When documents contain obligation-creating languageâ€”requirements, definitions, commitments, specificationsâ€”how do you verify those obligations were actually addressed?
 
-**How to evaluate this:** Don't ask "can DDRP review my documents?" Ask "do I need deterministic, falsifiable document structure extraction as a component in my system?" If yes, examine the code, run the hostile audit, and decide if this pattern fits your requirements. Fork it, adapt it, or use it as a reference for building your own. That's the point.
+**In high-stakes contexts, this matters:**
+- Regulatory submissions that must demonstrate compliance
+- Technical specifications where missing requirements cause failures  
+- Legal documents where unresolved obligations create liability
+- AI-generated content where you need to audit what was promised
 
----
+**Current approaches fail at scale:**
+- **Manual review** doesn't scale and isn't consistent
+- **Keyword search** misses context and relationships
+- **AI/ML systems** work but can't explain decisions or guarantee reproducibility
+- **Semantic analysis** is subjective and not auditable
 
-## What DDRP Is
-
-DDRP is a procedural accountability instrument that generates deterministic,
-inspectable artifacts recording whether obligation-creating language was emitted
-and whether it was structurally resolved.
-
-It is designed to support post-hoc inspection and reconstruction of epistemic
-care, especially in high-stakes or AI-mediated contexts, without interpreting
-meaning or making semantic judgments.
-
-DDRP produces **inspectable, reproducible artifacts**:
-- Operator detection results (REQ, DEF, CAUSE, SCOPE, UNIV, ANCHOR)
-- Obligation instantiation with status (SATISFIED, OPEN)
-- Cryptographically chained transaction records
-- SHA-256 hashes for traceability
-
-> **Note:** In DDRP, "obligation" refers to a structural linguistic pattern
-> (e.g., requirement operators), not a legal or normative determination.
+When you need to defend your analysis in court, cite it in policy, or build institutional processes around it, "the AI said so" isn't sufficient.
 
 ---
 
-## What DDRP Is For
+## DDRP's Approach
 
-DDRP exists to make it possible to reconstruct whether procedural care was
-exercised when obligation-creating language appeared in an artifact.
+DDRP detects obligation-creating language using **49 deterministic lexical patterns** and tracks whether those obligations get structurally resolved within the document.
 
-It answers questions such as:
-- Did obligation-creating language appear?
-- Were those obligations structurally resolved or left open?
-- Was this detectable at the time of production?
+**Key design principles:**
+- **No AI/ML** â€” Pure pattern matching, no probabilistic components
+- **No interpretation** â€” Detects linguistic structures, doesn't assess meaning
+- **Fully deterministic** â€” Identical input always produces identical output
+- **Auditable** â€” Every decision traceable to specific patterns and rules
 
-It does not answer whether the obligation was correct, valid, legal, or intended.
+**What DDRP detects:**
+- **REQ operators**: "must", "shall", "required to"
+- **DEF operators**: "defined as", "means", "refers to"  
+- **CAUSE operators**: "because", "due to", "results in"
+- **SCOPE operators**: "applies to", "limited to", "excludes"
+- **UNIV operators**: "all", "every", "none"
+- **ANCHOR operators**: "see section", "defined above", "per attachment"
 
----
-
-## What DDRP Is Not
-
-| DDRP Does NOT | Reason |
-|---------------|--------|
-| Interpret meaning | Lexical detection only |
-| Assert compliance | No legal authority |
-| Make recommendations | Structural observation only |
-| Use AI/ML | Deterministic pattern matching |
-| Provide risk scores | No subjective weighting |
-| Assess document quality | Structural observations, not evaluations |
-
-**Human judgment is always required.**
-
-DDRP intentionally trades coverage and linguistic sophistication for
-determinism and inspectability. This is a design constraint, not a limitation.
+**What DDRP tracks:**
+- Whether requirements have corresponding definitions
+- Whether scope is specified for obligations
+- Whether external references are anchored
+- **Obligation status**: SATISFIED (structurally complete) or OPEN (missing components)
 
 ---
 
-## Prerequisites
+## Proof It Works
 
-- **Node.js** v18 or later
-- **npm** (included with Node.js)
+**Determinism guarantee:** Identical input + identical ruleset = identical output (byte-for-byte)
 
----
-
-## Installation
-
+**Test it yourself:**
 ```bash
-# Clone the repository
+# Clone and install
 git clone https://github.com/btisler-DS/ddrp.git
-cd ddrp
+cd ddrp && npm install && npm run ui:install
 
-# Install dependencies
-npm install
-
-# Install UI dependencies
-npm run ui:install
-```
-
----
-
-## Running DDRP
-
-### Command Line
-
-```bash
-# Verify determinism
-npm run verify
-
-# Run hostile audit (all tests)
+# Run hostile audit (26 tests designed to break determinism)
 npm run hostile-audit
 
-# Run v0.1 audit only
-npm run hostile-audit-v01
-
-# Run v0.2 audit only
-npm run hostile-audit-v02
-
-# TypeScript type check
-npm run typecheck
+# Start browser UI
+npm run ui
 ```
+
+**The hostile audit includes:**
+- 50 identical runs must produce identical results
+- Semantically equivalent text must produce different outputs (proving it's lexical, not semantic)
+- Pattern changes must predictably affect detection
+- Edge cases designed to expose non-deterministic behavior
+
+If all tests pass, DDRP works as advertised. If not, it's broken.
+
+---
+
+## What This Is and Isn't
+
+**This is architectural infrastructure**, not a turnkey solution. Think of it like publishing a cryptographic libraryâ€”it demonstrates that deterministic, auditable document structure extraction is achievable and provides a working reference implementation.
+
+**What DDRP does:**
+- Detects obligation-creating linguistic patterns
+- Tracks structural completeness 
+- Generates reproducible, auditable results
+- Provides cryptographic traceability
+
+**What DDRP does NOT do:**
+- Interpret meaning or assess correctness
+- Provide legal opinions or compliance determinations  
+- Make recommendations or risk assessments
+- Use AI/ML or subjective weighting
+
+**Who this is for:** 
+- Regulatory agencies needing reproducible document analysis
+- Compliance departments that must defend their review processes
+- Research teams requiring auditable text analysis
+- Anyone who needs "because the deterministic pattern matched" instead of "because the AI said so"
+
+---
+
+## Quick Start
 
 ### Browser UI
-
 ```bash
-# Start development server
-npm run ui
-
-# Opens at http://localhost:3000
+npm run ui          # Start at http://localhost:3000
 ```
 
-### Production Build
-
+### Command Line
 ```bash
-# Build static files
-npm run ui:build
+npm run verify              # Basic verification
+npm run hostile-audit       # Full test suite  
+npm run typecheck          # TypeScript validation
+```
 
-# Output in ui/dist/
+### Example Output
+```json
+{
+  "protocol": {
+    "name": "DDRP",
+    "version": "0.2.0",
+    "doi": "10.5281/zenodo.18427220"
+  },
+  "detection": {
+    "REQ": [
+      {
+        "pattern": "must",
+        "text": "Users must provide valid credentials",
+        "line": 15,
+        "position": 42
+      }
+    ]
+  },
+  "obligations": [
+    {
+      "requirement": "Users must provide valid credentials",
+      "status": "OPEN",
+      "missing": ["definition of valid credentials"]
+    }
+  ]
+}
 ```
 
 ---
@@ -147,157 +160,56 @@ npm run ui:build
 
 ```
 ddrp/
-├── src/                          # Core TypeScript modules
-│   ├── operators_v0_1.ts         # Operator detection (49 patterns)
-│   ├── obligations_v0_1.ts       # Obligation instantiation
-│   ├── pdf_ingest_v0_2.ts        # PDF text extraction
-│   ├── pdf_canonicalizer_v0_2.ts # Text canonicalization (7 rules)
-│   ├── protocol_meta_v0_2.ts     # DOI/provenance metadata
-│   ├── transaction_log_v0_2.ts   # Transaction records (DTR)
-│   └── verify_checkpoint.ts      # Verification script
-├── ui/                           # Browser UI
-│   ├── src/
-│   │   ├── ddrp-core.js          # Browser bundle
-│   │   ├── main.js               # UI application
-│   │   └── style.css             # Styling
-│   └── public/
-│       ├── WARRANTY.md           # Warranty & non-reliance
-│       ├── USER_GUIDE.md         # User guide
-│       └── ORG_EXPANSION.md      # Organization expansion
-├── tests/
-│   ├── hostile_audit_v0_1/       # v0.1 hostile audit (10 tests)
-│   └── hostile_audit_v0_2/       # v0.2 hostile audit (16 tests)
-├── transactions/                 # Transaction records (created at runtime)
-├── DDRP_v0_1_SPEC.md             # v0.1 specification (frozen)
-├── DDRP_v0_2_SPEC.md             # v0.2 specification
-└── package.json
+â”œâ”€â”€ src/                    # Core TypeScript modules  
+â”‚   â”œâ”€â”€ operators_v0_1.ts   # 49 detection patterns
+â”‚   â”œâ”€â”€ obligations_v0_1.ts # Obligation tracking
+â”‚   â””â”€â”€ ...                 # PDF, hashing, transaction logs
+â”œâ”€â”€ tests/                  # Hostile audit (26 tests)
+â”œâ”€â”€ ui/                     # Browser interface
+â””â”€â”€ DDRP_v0_2_SPEC.md      # Full specification
 ```
 
 ---
 
-## Example Run
+## Installation
 
-### 1. Start the UI
+### Prerequisites
+- Node.js v18+
+- npm (included with Node.js)
 
+### Setup
 ```bash
-npm run ui
-```
-
-### 2. Enter or Load Text
-
-Paste document text or click "Load PDF" to extract text from a PDF.
-
-### 3. Run Deterministic Review
-
-Click "Run Deterministic Review" to:
-- Detect operators
-- Instantiate obligations
-- Generate hashes
-
-### 4. Export Results
-
-Export as JSON:
-- Operators only
-- Obligations only
-- Full bundle (with provenance)
-- Transaction record (if enabled)
-
-### Example Output (Bundle)
-
-```json
-{
-  "protocol": {
-    "name": "DDRP",
-    "version": "0.2.0",
-    "doi": "10.5281/zenodo.18427220",
-    "doi_status": "assigned"
-  },
-  "provenance": {
-    "input_format": "text",
-    "canonical_hash": "a1b2c3d4e5f67890",
-    "input_hash": "a1b2c3d4"
-  },
-  "timestamp": "2026-01-30T12:00:00.000Z",
-  "data": {
-    "detection": { ... },
-    "obligations": { ... },
-    "transaction_record": { ... }
-  }
-}
+git clone https://github.com/btisler-DS/ddrp.git
+cd ddrp
+npm install
+npm run ui:install
 ```
 
 ---
 
-## Determinism Guarantee
+## Evaluation Questions
 
-> **Identical input + identical ruleset = identical output (byte-for-byte)**
+Don't ask: "Can DDRP review my documents?"
 
-Run `npm run hostile-audit` to verify. All tests must pass.
+Ask: "Do I need deterministic, falsifiable document structure extraction as a component in my system?"
 
----
+If yes:
+1. Run the hostile audit to verify determinism
+2. Examine the 49 patterns to see if they fit your domain
+3. Test with your documents to assess coverage
+4. Fork and modify patterns for your use case
 
-## Hostile Audit Tests
-
-### v0.1 Tests (10)
-
-| Test | Purpose |
-|------|---------|
-| 01_environment | Operators detected from valid input |
-| 02_determinism | 50 runs produce identical output |
-| 03_semantic | Semantically equivalent text produces different output |
-| 04_rhetoric | Rhetoric-only text produces no REQ operators |
-| 05_missing_info | Incomplete requirements have OPEN status |
-| 06_contradiction | Conflicting requirements detected separately |
-| 07_scope | Scope operators detected, no inference |
-| 08_anchor | External references detected, no content imported |
-| 09_garbage | Non-language input produces no operators |
-| 10_mutability | Pattern changes affect detection |
-
-### v0.2 Tests (16)
-
-Includes all v0.1 tests plus:
-
-| Test | Purpose |
-|------|---------|
-| 11_canon_determinism | Canonicalization is deterministic |
-| 12-15 | Canonicalization rule verification |
-| 21-25 | PDF tests (skipped without PDF files) |
-| 31-34 | Transaction record tests |
-
----
-
-## Explicit Non-Claims
-
-DDRP **does not**:
-
-1. **Interpret meaning** — Detection is lexical, not semantic
-2. **Assert compliance** — No legal or regulatory authority
-3. **Certify correctness** — Structural observation only
-4. **Provide recommendations** — No advisory function
-5. **Seal documents legally** — Transaction records are for traceability only
-6. **Assess document quality, completeness, or correctness** — Outputs are structural observations, not evaluations
+If no, this isn't for youâ€”and that's fine.
 
 ---
 
 ## Documentation
 
-### Walkthroughs
-
-| Document | Description |
-|----------|-------------|
-| [DDRP_Walk_Through.pdf](./DDRP_Walk_Through.pdf) | Guided introduction to the protocol |
-| [DDRP_Walk_Through_Run_Review.pdf](./DDRP_Walk_Through_Run_Review.pdf) | Step-by-step review execution guide |
-
-### Specifications & Guides
-
-| Document | Description |
-|----------|-------------|
-| [DDRP_v0_1_SPEC.md](./DDRP_v0_1_SPEC.md) | v0.1 specification (frozen) |
-| [DDRP_v0_2_SPEC.md](./DDRP_v0_2_SPEC.md) | v0.2 specification (current) |
-| [ui/public/USER_GUIDE.md](./ui/public/USER_GUIDE.md) | UI user guide |
-| [ui/public/WARRANTY.md](./ui/public/WARRANTY.md) | Warranty & non-reliance |
-| [tests/hostile_audit_v0_1/RUN.md](./tests/hostile_audit_v0_1/RUN.md) | v0.1 audit criteria |
-| [tests/hostile_audit_v0_2/RUN.md](./tests/hostile_audit_v0_2/RUN.md) | v0.2 audit criteria |
+| Document | Purpose |
+|----------|---------|
+| [DDRP_v0_2_SPEC.md](./DDRP_v0_2_SPEC.md) | Complete technical specification |
+| [ui/public/USER_GUIDE.md](./ui/public/USER_GUIDE.md) | Browser UI walkthrough |
+| [tests/hostile_audit_v0_2/RUN.md](./tests/hostile_audit_v0_2/RUN.md) | Audit methodology |
 
 ---
 
