@@ -13,9 +13,10 @@
 
 If you're looking for a turnkey document review solution, this isn't it. DDRP is architectural infrastructure—a working example of how to build deterministic, auditable text analysis without semantic inference. Think of it like publishing a cryptographic library: it doesn't solve your whole problem, but if you need this specific capability (reproducible detection of obligation-creating language with full audit trails), here's a rigorously tested pattern you can adapt.
 
+
 ## The Problem
 
-When documents contain obligation-creating languageâ€”requirements, definitions, commitments, specificationsâ€”how do you verify those obligations were actually addressed?
+When documents contain obligation-creating language—requirements, definitions, commitments, specifications—how do you verify those obligations were actually addressed?
 
 **In high-stakes contexts, this matters:**
 - Regulatory submissions that must demonstrate compliance
@@ -31,17 +32,15 @@ When documents contain obligation-creating languageâ€”requirements, definit
 
 When you need to defend your analysis in court, cite it in policy, or build institutional processes around it, "the AI said so" isn't sufficient.
 
----
-
 ## DDRP's Approach
 
 DDRP detects obligation-creating language using **49 deterministic lexical patterns** and tracks whether those obligations get structurally resolved within the document.
 
 **Key design principles:**
-- **No AI/ML** â€” Pure pattern matching, no probabilistic components
-- **No interpretation** â€” Detects linguistic structures, doesn't assess meaning
-- **Fully deterministic** â€” Identical input always produces identical output
-- **Auditable** â€” Every decision traceable to specific patterns and rules
+- **No AI/ML** — Pure pattern matching, no probabilistic components
+- **No interpretation** — Detects linguistic structures, doesn't assess meaning
+- **Fully deterministic** — Identical input always produces identical output
+- **Auditable** — Every decision traceable to specific patterns and rules
 
 **What DDRP detects:**
 - **REQ operators**: "must", "shall", "required to"
@@ -56,8 +55,6 @@ DDRP detects obligation-creating language using **49 deterministic lexical patte
 - Whether scope is specified for obligations
 - Whether external references are anchored
 - **Obligation status**: SATISFIED (structurally complete) or OPEN (missing components)
-
----
 
 ## Proof It Works
 
@@ -84,11 +81,9 @@ npm run ui
 
 If all tests pass, DDRP works as advertised. If not, it's broken.
 
----
-
 ## What This Is and Isn't
 
-**This is architectural infrastructure**, not a turnkey solution. Think of it like publishing a cryptographic libraryâ€”it demonstrates that deterministic, auditable document structure extraction is achievable and provides a working reference implementation.
+**This is architectural infrastructure**, not a turnkey solution. Think of it like publishing a cryptographic library—it demonstrates that deterministic, auditable document structure extraction is achievable and provides a working reference implementation.
 
 **What DDRP does:**
 - Detects obligation-creating linguistic patterns
@@ -107,8 +102,6 @@ If all tests pass, DDRP works as advertised. If not, it's broken.
 - Compliance departments that must defend their review processes
 - Research teams requiring auditable text analysis
 - Anyone who needs "because the deterministic pattern matched" instead of "because the AI said so"
-
----
 
 ## Quick Start
 
@@ -152,22 +145,18 @@ npm run typecheck          # TypeScript validation
 }
 ```
 
----
-
 ## Project Structure
 
 ```
 ddrp/
-â”œâ”€â”€ src/                    # Core TypeScript modules  
-â”‚   â”œâ”€â”€ operators_v0_1.ts   # 49 detection patterns
-â”‚   â”œâ”€â”€ obligations_v0_1.ts # Obligation tracking
-â”‚   â””â”€â”€ ...                 # PDF, hashing, transaction logs
-â”œâ”€â”€ tests/                  # Hostile audit (26 tests)
-â”œâ”€â”€ ui/                     # Browser interface
-â””â”€â”€ DDRP_v0_2_SPEC.md      # Full specification
+├── src/                    # Core TypeScript modules  
+│   ├── operators_v0_1.ts   # 49 detection patterns
+│   ├── obligations_v0_1.ts # Obligation tracking
+│   └── ...                 # PDF, hashing, transaction logs
+├── tests/                  # Hostile audit (26 tests)
+├── ui/                     # Browser interface
+└── DDRP_v0_2_SPEC.md      # Full specification
 ```
-
----
 
 ## Installation
 
@@ -183,8 +172,6 @@ npm install
 npm run ui:install
 ```
 
----
-
 ## Evaluation Questions
 
 Don't ask: "Can DDRP review my documents?"
@@ -197,9 +184,7 @@ If yes:
 3. Test with your documents to assess coverage
 4. Fork and modify patterns for your use case
 
-If no, this isn't for youâ€”and that's fine.
-
----
+If no, this isn't for you—and that's fine.
 
 ## Documentation
 
@@ -208,8 +193,6 @@ If no, this isn't for youâ€”and that's fine.
 | [DDRP_v0_2_SPEC.md](./DDRP_v0_2_SPEC.md) | Complete technical specification |
 | [ui/public/USER_GUIDE.md](./ui/public/USER_GUIDE.md) | Browser UI walkthrough |
 | [tests/hostile_audit_v0_2/RUN.md](./tests/hostile_audit_v0_2/RUN.md) | Audit methodology |
-
----
 
 ## Citation
 
